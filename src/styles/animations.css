@@ -1,0 +1,146 @@
+/**
+ * 菜单动画样式
+ */
+
+/* 菜单项悬停动画 */
+@keyframes menu-item-hover {
+  from {
+    background-color: transparent;
+  }
+
+  to {
+    background-color: var(--menu-bg-hover);
+  }
+}
+
+/* 菜单项激活动画 */
+@keyframes menu-item-activate {
+  0% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(0.98);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* Popup 淡入动画 */
+@keyframes menu-popup-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Popup 淡出动画 */
+@keyframes menu-popup-fade-out {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  to {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+}
+
+/* 子菜单展开动画 */
+@keyframes submenu-expand {
+  from {
+    max-height: 0;
+    opacity: 0;
+  }
+
+  to {
+    max-height: 1000px;
+    opacity: 1;
+  }
+}
+
+/* 子菜单收起动画 */
+@keyframes submenu-collapse {
+  from {
+    max-height: 1000px;
+    opacity: 1;
+  }
+
+  to {
+    max-height: 0;
+    opacity: 0;
+  }
+}
+
+/* 应用动画 */
+.ldesign-menu-popup--visible {
+  animation: menu-popup-fade-in var(--menu-animation-duration) var(--menu-animation-easing);
+}
+
+.ldesign-menu-popup--hidden {
+  animation: menu-popup-fade-out var(--menu-animation-duration) var(--menu-animation-easing);
+}
+
+.ldesign-menu-item--expanding>.ldesign-menu-submenu {
+  animation: submenu-expand var(--menu-animation-duration) var(--menu-animation-easing);
+}
+
+.ldesign-menu-item--collapsing>.ldesign-menu-submenu {
+  animation: submenu-collapse var(--menu-animation-duration) var(--menu-animation-easing);
+}
+
+/* 过渡效果 */
+.ldesign-menu-item__content {
+  transition:
+    background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    border-left-color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.ldesign-menu-item__arrow {
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  display: inline-block;
+}
+
+/* 子菜单展开动画 */
+.submenu-expand-enter-active,
+.submenu-expand-leave-active {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.submenu-expand-enter-from,
+.submenu-expand-leave-to {
+  max-height: 0;
+  opacity: 0;
+}
+
+.submenu-expand-enter-to,
+.submenu-expand-leave-from {
+  max-height: 2000px;
+  opacity: 1;
+}
+
+.ldesign-menu--vertical.ldesign-menu--collapsed {
+  transition: width var(--menu-animation-duration) var(--menu-animation-easing);
+}
+
+.ldesign-menu-submenu {
+  transition:
+    max-height var(--menu-animation-duration) var(--menu-animation-easing),
+    opacity var(--menu-animation-duration) var(--menu-animation-easing);
+}
+
+/* 禁用动画（减少动画选项） */
+.ldesign-menu--no-animation * {
+  animation: none !important;
+  transition: none !important;
+}

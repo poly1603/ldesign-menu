@@ -1,0 +1,197 @@
+/**
+ * 菜单基础样式
+ */
+
+.ldesign-menu {
+  position: relative;
+  margin: 0;
+  padding: 0;
+  font-size: var(--size-font-base);
+  line-height: var(--size-line-normal);
+  color: var(--menu-text-color);
+  background-color: var(--menu-bg);
+  list-style: none;
+  box-sizing: border-box;
+}
+
+.ldesign-menu *,
+.ldesign-menu *::before,
+.ldesign-menu *::after {
+  box-sizing: border-box;
+}
+
+/* 菜单列表 */
+.ldesign-menu-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* 菜单项 */
+.ldesign-menu-item {
+  position: relative;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  cursor: pointer;
+  transition: all var(--menu-animation-duration) var(--menu-animation-easing);
+}
+
+/* 菜单项内容 */
+.ldesign-menu-item__content {
+  display: flex;
+  align-items: center;
+  height: var(--menu-item-height);
+  padding: var(--menu-item-padding-y) var(--menu-item-padding-x);
+  color: var(--menu-text-color);
+  text-decoration: none;
+  border-radius: var(--menu-border-radius);
+  border-left: 3px solid transparent;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  user-select: none;
+  outline: none;
+  cursor: pointer;
+}
+
+.ldesign-menu-item__content:hover {
+  background-color: var(--menu-bg-hover);
+  color: var(--menu-text-color-hover);
+  transform: translateX(2px);
+  border-left-color: var(--color-primary-light);
+}
+
+.ldesign-menu-item__content:focus-visible {
+  outline: 2px solid var(--color-primary-default);
+  outline-offset: -2px;
+}
+
+/* 激活状态 */
+.ldesign-menu-item--active>.ldesign-menu-item__content {
+  background-color: var(--menu-bg-active);
+  color: var(--menu-text-color-active);
+  font-weight: var(--size-font-weight-semibold);
+  border-left-color: var(--color-primary-default);
+  box-shadow: inset 3px 0 0 var(--color-primary-default);
+}
+
+/* 禁用状态 */
+.ldesign-menu-item--disabled {
+  cursor: not-allowed;
+}
+
+.ldesign-menu-item--disabled>.ldesign-menu-item__content {
+  color: var(--menu-text-color-disabled);
+  background-color: transparent;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* 图标 */
+.ldesign-menu-item__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--menu-icon-size);
+  height: var(--menu-icon-size);
+  margin-right: var(--menu-icon-margin);
+  font-size: var(--menu-icon-size);
+  flex-shrink: 0;
+}
+
+.ldesign-menu-item__icon svg {
+  width: 100%;
+  height: 100%;
+  fill: currentColor;
+}
+
+/* 标签 */
+.ldesign-menu-item__label {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* 角标 */
+.ldesign-menu-item__badge {
+  margin-left: var(--menu-icon-margin);
+  padding: 0 6px;
+  font-size: var(--size-font-xs);
+  line-height: 18px;
+  color: var(--color-text-inverse);
+  background-color: var(--color-danger-default);
+  border-radius: var(--size-radius-full);
+  flex-shrink: 0;
+}
+
+/* 箭头 */
+.ldesign-menu-item__arrow {
+  margin-left: auto;
+  font-size: var(--menu-arrow-size);
+  transition: transform var(--menu-animation-duration) var(--menu-animation-easing);
+  flex-shrink: 0;
+}
+
+.ldesign-menu-item--expanded>.ldesign-menu-item__content .ldesign-menu-item__arrow {
+  transform: rotate(90deg);
+}
+
+/* 子菜单 */
+.ldesign-menu-submenu {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  max-height: 0;
+  overflow: hidden;
+  background-color: var(--menu-submenu-bg);
+  opacity: 0;
+  transition: max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.ldesign-menu-item--expanded>.ldesign-menu-submenu {
+  max-height: 2000px;
+  opacity: 1;
+}
+
+/* Popup 容器 */
+.ldesign-menu-popup {
+  position: fixed;
+  z-index: var(--menu-popup-z-index);
+  min-width: 160px;
+  margin: 0;
+  padding: var(--size-spacing-xs) 0;
+  background-color: var(--menu-popup-bg);
+  border: 1px solid var(--menu-border-color);
+  border-radius: var(--menu-border-radius);
+  box-shadow: var(--menu-popup-shadow);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity var(--menu-animation-duration) var(--menu-animation-easing);
+}
+
+.ldesign-menu-popup--visible {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* 分隔线 */
+.ldesign-menu-divider {
+  height: 1px;
+  margin: var(--size-spacing-xs) 0;
+  background-color: var(--menu-border-color);
+  border: none;
+}
+
+/* 菜单分组 */
+.ldesign-menu-group {
+  margin: 0;
+  padding: 0;
+}
+
+.ldesign-menu-group__title {
+  padding: var(--size-spacing-xs) var(--menu-item-padding-x);
+  font-size: var(--size-font-xs);
+  color: var(--color-text-tertiary);
+  line-height: var(--size-line-normal);
+}

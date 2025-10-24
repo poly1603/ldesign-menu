@@ -1,0 +1,11 @@
+node_modules
+dist
+es
+lib
+coverage
+.DS_Store
+*.log
+.vscode
+.idea
+
+

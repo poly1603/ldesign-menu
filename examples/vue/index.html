@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LDesign Menu - Vue3 示例</title>
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: #f5f5f5;
+    }
+
+    #app {
+      display: flex;
+      height: 100vh;
+    }
+
+    .sidebar {
+      background-color: #fff;
+      box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .content {
+      flex: 1;
+      padding: 24px;
+    }
+
+    h1 {
+      margin-bottom: 16px;
+    }
+
+    .controls {
+      margin-bottom: 24px;
+    }
+
+    button {
+      padding: 8px 16px;
+      margin-right: 8px;
+      border: 1px solid #d9d9d9;
+      background-color: #fff;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      border-color: #40a9ff;
+      color: #40a9ff;
+    }
+
+    .info {
+      padding: 16px;
+      background-color: #fff;
+      border-radius: 4px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+  </style>
+</head>
+
+<body>
+  <div id="app">
+    <div class="sidebar">
+      <l-menu :items="menuItems" :mode="mode" :collapsed="collapsed" @select="handleSelect"
+        @collapsed-change="handleCollapsedChange" />
+    </div>
+    <div class="content">
+      <h1>LDesign Menu - Vue3 示例</h1>
+      <div class="controls">
+        <button @click="toggleCollapsed">切换收起</button>
+        <button @click="toggleMode">切换模式</button>
+        <button @click="changeTheme">切换主题</button>
+      </div>
+      <div class="info" v-if="selectedItem">
+        <h3>选中的菜单项：</h3>
+        <p><strong>ID:</strong> {{ selectedItem.id }}</p>
+        <p><strong>Label:</strong> {{ selectedItem.label }}</p>
+        <p><strong>Path:</strong> {{ selectedItem.path || 'N/A' }}</p>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    const { createApp, ref } = Vue
+
+    createApp({
+      setup() {
+        const mode = ref('vertical')
+        const collapsed = ref(false)
+        const selectedItem = ref(null)
+
+        const menuItems = ref([
+          {
+            id: '1',
+            label: '首页',
+            icon: '🏠',
+            path: '/',
+          },
+          {
+            id: '2',
+            label: '产品',
+            icon: '📦',
+            children: [
+              { id: '2-1', label: '产品 A', path: '/products/a' },
+              { id: '2-2', label: '产品 B', path: '/products/b' },
+              {
+                id: '2-3',
+                label: '产品 C',
+                children: [
+                  { id: '2-3-1', label: '子产品 1', path: '/products/c/1' },
+                  { id: '2-3-2', label: '子产品 2', path: '/products/c/2' },
+                ],
+              },
+            ],
+          },
+          {
+            id: '3',
+            label: '服务',
+            icon: '🛠️',
+            children: [
+              { id: '3-1', label: '咨询服务', path: '/services/consulting' },
+              { id: '3-2', label: '技术支持', path: '/services/support' },
+            ],
+          },
+          {
+            id: '4',
+            label: '关于',
+            icon: 'ℹ️',
+            path: '/about',
+          },
+        ])
+
+        const handleSelect = (item) => {
+          selectedItem.value = item
+          console.log('Selected:', item)
+        }
+
+        const handleCollapsedChange = (value) => {
+          console.log('Collapsed:', value)
+        }
+
+        const toggleCollapsed = () => {
+          collapsed.value = !collapsed.value
+        }
+
+        const toggleMode = () => {
+          mode.value = mode.value === 'vertical' ? 'horizontal' : 'vertical'
+        }
+
+        const changeTheme = () => {
+          const currentTheme = document.documentElement.getAttribute('data-theme-mode')
+          const newTheme = currentTheme === 'dark' ? 'light' : 'dark'
+          document.documentElement.setAttribute('data-theme-mode', newTheme)
+        }
+
+        return {
+          mode,
+          collapsed,
+          menuItems,
+          selectedItem,
+          handleSelect,
+          handleCollapsedChange,
+          toggleCollapsed,
+          toggleMode,
+          changeTheme,
+        }
+      },
+    }).mount('#app')
+  </script>
+</body>
+
+</html>
