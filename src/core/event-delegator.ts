@@ -27,18 +27,43 @@ export interface EventDelegatorConfig {
 
 /**
  * 事件委托器类
+ * 
+ * @description
+ * 使用事件委托模式管理菜单的所有用户交互事件，包括点击、悬停和键盘导航。
+ * 通过在容器元素上绑定事件监听器，减少内存占用并提升性能。
  */
 export class EventDelegator {
   private container: HTMLElement | null = null
   private config: EventDelegatorConfig
   private keyboardEnabled = true
 
+  // 保存绑定后的事件处理函数引用，用于正确解绑
+  private boundHandleClick: ((event: MouseEvent) => void) | null = null
+  private boundHandleMouseEnter: ((event: MouseEvent) => void) | null = null
+  private boundHandleMouseLeave: ((event: MouseEvent) => void) | null = null
+  private boundHandleKeydown: ((event: KeyboardEvent) => void) | null = null
+  private boundHandleFocus: ((event: FocusEvent) => void) | null = null
+  private boundHandleBlur: ((event: FocusEvent) => void) | null = null
+
   constructor(config: EventDelegatorConfig = {}) {
     this.config = config
+
+    // 在构造函数中绑定所有事件处理方法，避免内存泄漏
+    this.boundHandleClick = this.handleClick.bind(this)
+    this.boundHandleMouseEnter = this.handleMouseEnter.bind(this)
+    this.boundHandleMouseLeave = this.handleMouseLeave.bind(this)
+    this.boundHandleKeydown = this.handleKeydown.bind(this)
+    this.boundHandleFocus = this.handleFocus.bind(this)
+    this.boundHandleBlur = this.handleBlur.bind(this)
   }
 
   /**
    * 绑定容器
+   * 
+   * @description
+   * 将事件监听器绑定到容器元素上，使用事件委托模式处理所有子元素的事件。
+   * 
+   * @param container - 要绑定事件的容器元素
    */
   attach(container: HTMLElement): void {
     if (this.container) {
@@ -48,36 +73,65 @@ export class EventDelegator {
     this.container = container
 
     // 点击事件
-    on(container, 'click', this.handleClick.bind(this))
+    if (this.boundHandleClick) {
+      on(container, 'click', this.boundHandleClick)
+    }
 
-    // 鼠标悬停事件
-    on(container, 'mouseenter', this.handleMouseEnter.bind(this), true)
-    on(container, 'mouseleave', this.handleMouseLeave.bind(this), true)
+    // 鼠标悬停事件（使用捕获阶段以便更早响应）
+    if (this.boundHandleMouseEnter) {
+      on(container, 'mouseenter', this.boundHandleMouseEnter, true)
+    }
+    if (this.boundHandleMouseLeave) {
+      on(container, 'mouseleave', this.boundHandleMouseLeave, true)
+    }
 
     // 键盘导航
     if (this.keyboardEnabled) {
-      on(container, 'keydown', this.handleKeydown.bind(this))
-      on(container, 'focus', this.handleFocus.bind(this), true)
-      on(container, 'blur', this.handleBlur.bind(this), true)
+      if (this.boundHandleKeydown) {
+        on(container, 'keydown', this.boundHandleKeydown)
+      }
+      if (this.boundHandleFocus) {
+        on(container, 'focus', this.boundHandleFocus, true)
+      }
+      if (this.boundHandleBlur) {
+        on(container, 'blur', this.boundHandleBlur, true)
+      }
     }
   }
 
   /**
    * 解绑容器
+   * 
+   * @description
+   * 移除所有事件监听器，释放资源，防止内存泄漏。
+   * 使用保存的函数引用确保能够正确移除监听器。
    */
   detach(): void {
     if (!this.container) {
       return
     }
 
-    off(this.container, 'click', this.handleClick.bind(this))
-    off(this.container, 'mouseenter', this.handleMouseEnter.bind(this), true)
-    off(this.container, 'mouseleave', this.handleMouseLeave.bind(this), true)
+    // 使用保存的函数引用来移除事件监听器
+    if (this.boundHandleClick) {
+      off(this.container, 'click', this.boundHandleClick)
+    }
+    if (this.boundHandleMouseEnter) {
+      off(this.container, 'mouseenter', this.boundHandleMouseEnter, true)
+    }
+    if (this.boundHandleMouseLeave) {
+      off(this.container, 'mouseleave', this.boundHandleMouseLeave, true)
+    }
 
     if (this.keyboardEnabled) {
-      off(this.container, 'keydown', this.handleKeydown.bind(this))
-      off(this.container, 'focus', this.handleFocus.bind(this), true)
-      off(this.container, 'blur', this.handleBlur.bind(this), true)
+      if (this.boundHandleKeydown) {
+        off(this.container, 'keydown', this.boundHandleKeydown)
+      }
+      if (this.boundHandleFocus) {
+        off(this.container, 'focus', this.boundHandleFocus, true)
+      }
+      if (this.boundHandleBlur) {
+        off(this.container, 'blur', this.boundHandleBlur, true)
+      }
     }
 
     this.container = null
@@ -236,21 +290,27 @@ export class EventDelegator {
 
   /**
    * 启用键盘导航
+   * 
+   * @description
+   * 动态启用键盘导航功能，支持方向键、Enter、Space等快捷键操作。
    */
   enableKeyboard(): void {
     this.keyboardEnabled = true
-    if (this.container) {
-      on(this.container, 'keydown', this.handleKeydown.bind(this))
+    if (this.container && this.boundHandleKeydown) {
+      on(this.container, 'keydown', this.boundHandleKeydown)
     }
   }
 
   /**
    * 禁用键盘导航
+   * 
+   * @description
+   * 动态禁用键盘导航功能，移除键盘事件监听器。
    */
   disableKeyboard(): void {
     this.keyboardEnabled = false
-    if (this.container) {
-      off(this.container, 'keydown', this.handleKeydown.bind(this))
+    if (this.container && this.boundHandleKeydown) {
+      off(this.container, 'keydown', this.boundHandleKeydown)
     }
   }
 

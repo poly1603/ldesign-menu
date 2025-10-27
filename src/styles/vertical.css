@@ -9,7 +9,6 @@
   height: 100%;
   overflow-y: auto;
   overflow-x: hidden;
-  border-right: 1px solid var(--menu-border-color);
 }
 
 .ldesign-menu--vertical>.ldesign-menu-list {

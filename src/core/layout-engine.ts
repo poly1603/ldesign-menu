@@ -1,5 +1,9 @@
 /**
- * 布局引擎
+ * 布局引擎模块
+ * 
+ * @description
+ * 负责计算和管理菜单的布局信息，包括横向和纵向布局、菜单项位置计算、
+ * 响应式处理等功能。为渲染引擎提供精确的布局数据。
  */
 
 import type { FlatMenuItem, LayoutResult, MenuConfig, MenuItem, Position } from '../types'
@@ -7,6 +11,24 @@ import { flattenTree } from '../utils/tree-utils'
 
 /**
  * 布局引擎类
+ * 
+ * @description
+ * 管理菜单的布局计算逻辑，支持横向和纵向两种布局模式。
+ * 根据菜单配置和容器尺寸，计算每个菜单项的位置和尺寸，
+ * 并提供响应式布局支持。
+ * 
+ * @example
+ * ```ts
+ * const engine = new LayoutEngine({
+ *   mode: 'vertical',
+ *   itemHeight: 40,
+ *   indent: 24
+ * })
+ * 
+ * engine.setItems(menuItems)
+ * const layout = engine.getLayout()
+ * const position = engine.getItemPosition('item-1')
+ * ```
  */
 export class LayoutEngine {
   private config: MenuConfig
@@ -20,6 +42,19 @@ export class LayoutEngine {
 
   /**
    * 设置菜单项
+   * 
+   * @description
+   * 更新菜单项数据，将树形结构扁平化，并重新计算布局。
+   * 
+   * @param items - 菜单项数组
+   * 
+   * @example
+   * ```ts
+   * engine.setItems([
+   *   { id: '1', label: '首页' },
+   *   { id: '2', label: '产品', children: [...] }
+   * ])
+   * ```
    */
   setItems(items: MenuItem[]): void {
     this.items = items
@@ -29,6 +64,19 @@ export class LayoutEngine {
 
   /**
    * 更新配置
+   * 
+   * @description
+   * 动态更新布局配置，并重新计算布局。
+   * 
+   * @param config - 部分配置对象
+   * 
+   * @example
+   * ```ts
+   * engine.updateConfig({
+   *   itemHeight: 50,
+   *   indent: 30
+   * })
+   * ```
    */
   updateConfig(config: Partial<MenuConfig>): void {
     this.config = {
@@ -40,6 +88,11 @@ export class LayoutEngine {
 
   /**
    * 计算布局
+   * 
+   * @description
+   * 根据当前模式（横向/纵向）计算所有菜单项的位置。
+   * 
+   * @private
    */
   private calculateLayout(): void {
     this.itemPositions.clear()
@@ -54,6 +107,12 @@ export class LayoutEngine {
 
   /**
    * 计算横向布局
+   * 
+   * @description
+   * 计算横向菜单的布局位置，只计算第一级菜单项（根级别）。
+   * 子菜单通过 popup 方式显示，不参与主布局计算。
+   * 
+   * @private
    */
   private calculateHorizontalLayout(): void {
     let currentX = 0
@@ -70,6 +129,7 @@ export class LayoutEngine {
         })
 
         // 估算宽度（实际宽度需要在渲染后获取）
+        // 基于文本长度估算，实际可能需要测量
         const estimatedWidth = item.label.length * 14 + indent * 2
         currentX += estimatedWidth
       })
@@ -77,6 +137,12 @@ export class LayoutEngine {
 
   /**
    * 计算纵向布局
+   * 
+   * @description
+   * 计算纵向菜单的布局位置，包括所有层级的菜单项。
+   * 每个层级根据缩进值向右偏移。
+   * 
+   * @private
    */
   private calculateVerticalLayout(): void {
     const itemHeight = this.config.itemHeight || 40
@@ -84,6 +150,7 @@ export class LayoutEngine {
     let currentY = 0
 
     this.flatItems.forEach((item) => {
+      // 根据层级计算水平偏移
       const x = item.level * indent
 
       this.itemPositions.set(item.id, {

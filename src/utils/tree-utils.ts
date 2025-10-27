@@ -84,6 +84,19 @@ export function findMenuItemByPath(
 
 /**
  * 获取菜单项的所有父级
+ * 
+ * @description
+ * 递归查找指定菜单项的所有父级节点，从根节点到直接父级按顺序返回。
+ * 
+ * @param items - 菜单项数组
+ * @param id - 目标菜单项ID
+ * @returns 父级节点数组，按从根到直接父级的顺序排列
+ * 
+ * @example
+ * ```ts
+ * const parents = getMenuItemParents(menuItems, '2-1')
+ * // 返回: [{ id: '2', label: '产品', ... }]
+ * ```
  */
 export function getMenuItemParents(
   items: MenuItem[],
@@ -132,19 +145,40 @@ export function getMenuItemChildrenIds(item: MenuItem): (string | number)[] {
 
 /**
  * 过滤菜单树
+ * 
+ * @description
+ * 根据条件过滤菜单树，返回符合条件的菜单项及其子项。
+ * 使用深度克隆确保不修改原始数据，符合不可变数据原则。
+ * 
+ * @param items - 要过滤的菜单项数组
+ * @param predicate - 过滤条件函数，返回 true 表示保留该项
+ * @returns 过滤后的新菜单项数组（深度克隆）
+ * 
+ * @example
+ * ```ts
+ * const filtered = filterMenuTree(menuItems, item => !item.hidden)
+ * ```
  */
 export function filterMenuTree(
   items: MenuItem[],
   predicate: (item: MenuItem) => boolean,
 ): MenuItem[] {
   return items
-    .filter((item) => {
-      if (item.children) {
-        item.children = filterMenuTree(item.children, predicate)
+    .map((item) => {
+      // 深度克隆菜单项，避免修改原始数据
+      const clonedItem: MenuItem = { ...item }
+
+      // 递归过滤子项
+      if (clonedItem.children && clonedItem.children.length > 0) {
+        clonedItem.children = filterMenuTree(clonedItem.children, predicate)
       }
+
+      return clonedItem
+    })
+    .filter((item) => {
+      // 保留符合条件的项，或有符合条件的子项的父项
       return predicate(item) || (item.children && item.children.length > 0)
     })
-    .map(item => ({ ...item }))
 }
 
 /**
@@ -216,12 +250,78 @@ export function hasPermission(
 
 /**
  * 根据权限过滤菜单
+ * 
+ * @description
+ * 根据用户权限过滤菜单树，只保留用户有权限访问的菜单项。
+ * 
+ * @param items - 菜单项数组
+ * @param userPermissions - 用户权限数组
+ * @returns 过滤后的菜单项数组
  */
 export function filterMenuByPermissions(
   items: MenuItem[],
   userPermissions: string[],
 ): MenuItem[] {
   return filterMenuTree(items, item => hasPermission(item, userPermissions))
+}
+
+/**
+ * 获取同级菜单项
+ * 
+ * @description
+ * 查找与指定菜单项处于同一层级的所有菜单项（兄弟节点）。
+ * 主要用于手风琴模式，收起其他同级菜单项。
+ * 
+ * @param items - 菜单项数组
+ * @param id - 目标菜单项ID
+ * @returns 同级菜单项数组（不包含目标菜单项本身）
+ * 
+ * @example
+ * ```ts
+ * const siblings = getMenuItemSiblings(menuItems, '2-1')
+ * // 返回: [{ id: '2-2', ... }, { id: '2-3', ... }]
+ * ```
+ */
+export function getMenuItemSiblings(
+  items: MenuItem[],
+  id: string | number,
+): MenuItem[] {
+  // 查找目标项的父级
+  const parents = getMenuItemParents(items, id)
+
+  // 如果没有父级，说明是根级菜单项
+  if (parents.length === 0) {
+    // 返回根级别的其他菜单项
+    return items.filter(item => item.id !== id)
+  }
+
+  // 获取直接父级
+  const directParent = parents[parents.length - 1]
+
+  // 返回父级的其他子项
+  if (directParent.children) {
+    return directParent.children.filter(item => item.id !== id)
+  }
+
+  return []
+}
+
+/**
+ * 获取同级菜单项的ID数组
+ * 
+ * @description
+ * 获取与指定菜单项同级的所有菜单项ID，便于快速操作。
+ * 
+ * @param items - 菜单项数组
+ * @param id - 目标菜单项ID
+ * @returns 同级菜单项ID数组
+ */
+export function getMenuItemSiblingIds(
+  items: MenuItem[],
+  id: string | number,
+): (string | number)[] {
+  const siblings = getMenuItemSiblings(items, id)
+  return siblings.map(item => item.id)
 }
 
 

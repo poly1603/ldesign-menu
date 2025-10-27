@@ -4,7 +4,7 @@
 
 import type { PopupPlacement } from '../types'
 import { calculatePopupPosition, getElementRect } from '../utils/position-utils'
-import { addClass, createElement, off, on, remove, removeClass, setStyle } from '../utils/dom-utils'
+import { addClass, createElement, debounce, off, on, remove, removeClass, setStyle, throttle } from '../utils/dom-utils'
 
 /**
  * Popup 信息
@@ -19,29 +19,65 @@ interface PopupInfo {
 
 /**
  * Popup 管理器类
+ * 
+ * @description
+ * 管理所有弹出式子菜单的生命周期，包括创建、定位、更新和销毁。
+ * 支持自动边界检测、位置翻转、点击外部关闭等功能。
  */
 export class PopupManager {
   private popups: Map<string, PopupInfo> = new Map()
   private offset = 4
   private zIndexBase = 1000
 
+  // 保存绑定后的事件处理函数引用，用于正确解绑
+  private boundHandleDocumentClick: ((event: MouseEvent) => void) | null = null
+  private boundHandleDocumentKeydown: ((event: KeyboardEvent) => void) | null = null
+  private boundHandleScroll: (() => void) | null = null
+  private boundHandleResize: (() => void) | null = null
+
   constructor(offset = 4) {
     this.offset = offset
+
+    // 在构造函数中绑定所有事件处理方法
+    this.boundHandleDocumentClick = this.handleDocumentClick.bind(this)
+    this.boundHandleDocumentKeydown = this.handleDocumentKeydown.bind(this)
+
+    // 滚动和resize事件使用节流优化，减少高频调用
+    // 16ms约等于60fps，确保流畅的视觉反馈
+    this.boundHandleScroll = throttle(this.handleScroll.bind(this), 16)
+    this.boundHandleResize = throttle(this.handleResize.bind(this), 16)
+
     this.setupGlobalListeners()
   }
 
   /**
    * 设置全局监听器
+   * 
+   * @description
+   * 在文档和窗口上设置全局事件监听器，用于处理点击外部关闭、ESC键关闭、
+   * 滚动时更新位置等功能。使用绑定的函数引用确保能够正确清理。
+   * 
+   * 性能优化：
+   * - scroll 和 resize 事件已使用节流处理（16ms，约60fps）
+   * - scroll 事件使用 passive 监听器，提升滚动性能
    */
   private setupGlobalListeners(): void {
-    // 点击外部关闭
-    on(document, 'click', this.handleDocumentClick.bind(this), true)
+    // 点击外部关闭（使用捕获阶段）
+    if (this.boundHandleDocumentClick) {
+      on(document, 'click', this.boundHandleDocumentClick, true)
+    }
     // ESC 关闭
-    on(document, 'keydown', this.handleDocumentKeydown.bind(this))
-    // 滚动时更新位置
-    on(window, 'scroll', this.handleScroll.bind(this), true)
+    if (this.boundHandleDocumentKeydown) {
+      on(document, 'keydown', this.boundHandleDocumentKeydown)
+    }
+    // 滚动时更新位置（使用 passive 监听器提升性能）
+    if (this.boundHandleScroll) {
+      on(window, 'scroll', this.boundHandleScroll, { capture: true, passive: true })
+    }
     // 窗口大小变化时更新位置
-    on(window, 'resize', this.handleResize.bind(this))
+    if (this.boundHandleResize) {
+      on(window, 'resize', this.boundHandleResize)
+    }
   }
 
   /**
@@ -252,16 +288,34 @@ export class PopupManager {
 
   /**
    * 销毁
+   * 
+   * @description
+   * 清理所有popup和事件监听器，释放资源，防止内存泄漏。
+   * 应在组件卸载时调用此方法。
    */
   destroy(): void {
     // 关闭所有 popup
     this.closeAll()
 
-    // 移除全局监听器
-    off(document, 'click', this.handleDocumentClick.bind(this), true)
-    off(document, 'keydown', this.handleDocumentKeydown.bind(this))
-    off(window, 'scroll', this.handleScroll.bind(this), true)
-    off(window, 'resize', this.handleResize.bind(this))
+    // 使用保存的函数引用移除全局监听器
+    if (this.boundHandleDocumentClick) {
+      off(document, 'click', this.boundHandleDocumentClick, true)
+    }
+    if (this.boundHandleDocumentKeydown) {
+      off(document, 'keydown', this.boundHandleDocumentKeydown)
+    }
+    if (this.boundHandleScroll) {
+      off(window, 'scroll', this.boundHandleScroll, { capture: true, passive: true } as any)
+    }
+    if (this.boundHandleResize) {
+      off(window, 'resize', this.boundHandleResize)
+    }
+
+    // 清空函数引用
+    this.boundHandleDocumentClick = null
+    this.boundHandleDocumentKeydown = null
+    this.boundHandleScroll = null
+    this.boundHandleResize = null
   }
 }
 

@@ -1,9 +1,38 @@
 /**
- * DOM 操作工具
+ * DOM 操作工具模块
+ * 
+ * @description
+ * 提供一组常用的 DOM 操作辅助函数，简化元素创建、样式设置、事件绑定等操作。
+ * 所有函数经过性能优化，适合在菜单组件的高频渲染场景中使用。
  */
 
 /**
- * 创建元素
+ * 创建 HTML 元素
+ * 
+ * @description
+ * 创建指定标签的元素，可选地设置类名和属性。
+ * 使用类型安全的方式确保返回正确的元素类型。
+ * 
+ * @template K - HTML 元素标签名类型
+ * @param tag - HTML 标签名
+ * @param className - CSS 类名（可选）
+ * @param attributes - HTML 属性对象（可选）
+ * @returns 创建的 HTML 元素
+ * 
+ * @example
+ * ```ts
+ * // 创建简单元素
+ * const div = createElement('div')
+ * 
+ * // 创建带类名的元素
+ * const menuItem = createElement('li', 'ldesign-menu-item')
+ * 
+ * // 创建带属性的元素
+ * const link = createElement('a', 'menu-link', {
+ *   href: '/home',
+ *   'data-id': '1'
+ * })
+ * ```
  */
 export function createElement<K extends keyof HTMLElementTagNameMap>(
   tag: K,

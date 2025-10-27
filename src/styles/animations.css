@@ -1,5 +1,14 @@
 /**
  * 菜单动画样式
+ * 
+ * @description
+ * 定义菜单的所有动画效果，使用CSS动画和过渡。
+ * 
+ * 性能优化：
+ * - 使用 transform 和 opacity 属性（GPU 加速）
+ * - 使用 will-change 提示浏览器优化
+ * - 使用 translate3d 启用硬件加速
+ * - 避免使用触发 reflow 的属性（width、height、top、left）
  */
 
 /* 菜单项悬停动画 */
@@ -28,29 +37,29 @@
   }
 }
 
-/* Popup 淡入动画 */
+/* Popup 淡入动画（使用 translate3d 启用 GPU 加速） */
 @keyframes menu-popup-fade-in {
   from {
     opacity: 0;
-    transform: translateY(-8px);
+    transform: translate3d(0, -8px, 0);
   }
 
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: translate3d(0, 0, 0);
   }
 }
 
-/* Popup 淡出动画 */
+/* Popup 淡出动画（使用 translate3d 启用 GPU 加速） */
 @keyframes menu-popup-fade-out {
   from {
     opacity: 1;
-    transform: translateY(0);
+    transform: translate3d(0, 0, 0);
   }
 
   to {
     opacity: 0;
-    transform: translateY(-8px);
+    transform: translate3d(0, -8px, 0);
   }
 }
 
@@ -83,10 +92,18 @@
 /* 应用动画 */
 .ldesign-menu-popup--visible {
   animation: menu-popup-fade-in var(--menu-animation-duration) var(--menu-animation-easing);
+  /* GPU 加速：使用 transform 和 opacity 触发合成层 */
+  will-change: transform, opacity;
+}
+
+/* 动画完成后移除 will-change，释放资源 */
+.ldesign-menu-popup--visible.animation-finished {
+  will-change: auto;
 }
 
 .ldesign-menu-popup--hidden {
   animation: menu-popup-fade-out var(--menu-animation-duration) var(--menu-animation-easing);
+  will-change: transform, opacity;
 }
 
 .ldesign-menu-item--expanding>.ldesign-menu-submenu {
@@ -97,18 +114,33 @@
   animation: submenu-collapse var(--menu-animation-duration) var(--menu-animation-easing);
 }
 
-/* 过渡效果 */
+/* 过渡效果（使用 GPU 加速的属性） */
 .ldesign-menu-item__content {
   transition:
     background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
     color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
     transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
     border-left-color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* 提示浏览器即将发生变化的属性，提前优化 */
+  will-change: background-color, transform;
+}
+
+/* 悬停时移除 will-change，避免长期占用资源 */
+.ldesign-menu-item__content:hover {
+  will-change: auto;
 }
 
 .ldesign-menu-item__arrow {
   transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   display: inline-block;
+  /* 提示浏览器箭头将旋转 */
+  will-change: transform;
+}
+
+/* 展开状态时移除 will-change */
+.ldesign-menu-item--expanded .ldesign-menu-item__arrow {
+  will-change: auto;
 }
 
 /* 子菜单展开动画 */
@@ -131,12 +163,28 @@
 
 .ldesign-menu--vertical.ldesign-menu--collapsed {
   transition: width var(--menu-animation-duration) var(--menu-animation-easing);
+  /* 提示浏览器宽度将变化 */
+  will-change: width;
+}
+
+/* 过渡完成后移除 will-change */
+.ldesign-menu--vertical.ldesign-menu--collapsed:not(.transitioning) {
+  will-change: auto;
 }
 
 .ldesign-menu-submenu {
   transition:
     max-height var(--menu-animation-duration) var(--menu-animation-easing),
     opacity var(--menu-animation-duration) var(--menu-animation-easing);
+  /* 提示浏览器这些属性将变化 */
+  will-change: max-height, opacity;
+  /* 启用 GPU 加速的层叠上下文 */
+  transform: translateZ(0);
+}
+
+/* 展开/收起完成后移除 will-change */
+.ldesign-menu-submenu:not(.expanding):not(.collapsing) {
+  will-change: auto;
 }
 
 /* 禁用动画（减少动画选项） */
