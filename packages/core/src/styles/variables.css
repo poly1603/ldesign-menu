@@ -1,0 +1,115 @@
+/**
+ * 菜单 CSS 变量
+ * 基于全局主题变量（color.css 和 size.css）
+ * 参考 TDesign 和 Ant Design 设计规范
+ */
+
+:root {
+  /* ========== 颜色变量 ========== */
+  /* 菜单背景色 */
+  --menu-bg: var(--color-bg-container);
+  --menu-bg-hover: var(--color-bg-component-hover);
+  --menu-bg-active: var(--color-primary-50);
+  --menu-bg-disabled: var(--color-bg-component-disabled);
+
+  /* 子菜单背景色 */
+  --menu-submenu-bg: var(--color-bg-page);
+  --menu-popup-bg: var(--color-bg-popover);
+
+  /* 菜单项文字颜色 */
+  --menu-text-color: var(--color-text-primary);
+  --menu-text-color-hover: var(--color-primary-default);
+  --menu-text-color-active: var(--color-primary-default);
+  --menu-text-color-disabled: var(--color-text-disabled);
+  --menu-text-color-secondary: var(--color-text-secondary);
+
+  /* 菜单边框颜色 */
+  --menu-border-color: var(--color-border-light);
+  --menu-border-color-active: var(--color-primary-default);
+
+  /* 激活指示器 */
+  --menu-indicator-color: var(--color-primary-default);
+  --menu-indicator-width: 3px;
+
+  /* ========== 尺寸变量 ========== */
+  /* 菜单宽度 */
+  --menu-width: 240px;
+  --menu-collapsed-width: 64px;
+
+  /* 菜单项高度 - 更舒适的高度 */
+  --menu-item-height: 40px;
+
+  /* 菜单项内边距 - 更宽松的间距 */
+  --menu-item-padding-x: var(--size-spacing-xl);
+  /* 16px */
+  --menu-item-padding-y: var(--size-spacing-md);
+  /* 8px */
+
+  /* 菜单内边距 */
+  --menu-padding: var(--size-spacing-md);
+  /* 8px */
+
+  /* 子菜单缩进 */
+  --menu-indent: 24px;
+
+  /* 边框圆角 - TDesign 风格 */
+  --menu-border-radius: var(--size-radius-sm);
+  /* 4px */
+  --menu-item-border-radius: var(--size-radius-sm);
+  /* 4px */
+
+  /* 图标尺寸 */
+  --menu-icon-size: var(--size-icon-large);
+  /* 20px */
+  --menu-icon-margin: var(--size-spacing-lg);
+  /* 12px */
+
+  /* 箭头尺寸 */
+  --menu-arrow-size: 16px;
+
+  /* Popup 偏移 */
+  --menu-popup-offset: 4px;
+
+  /* ========== 动画变量 ========== */
+  --menu-animation-duration: var(--size-duration-normal);
+  /* 300ms */
+  --menu-animation-duration-fast: var(--size-duration-fast);
+  /* 150ms */
+  --menu-animation-easing: var(--size-ease-in-out);
+  --menu-animation-easing-smooth: cubic-bezier(0.34, 0.69, 0.1, 1);
+
+  /* ========== 阴影变量 ========== */
+  --menu-shadow: none;
+  --menu-popup-shadow: var(--shadow-lg);
+  --menu-item-shadow-hover: 0 2px 8px rgba(0, 0, 0, 0.04);
+
+  /* ========== Z-Index ========== */
+  --menu-z-index: var(--z-index-dropdown);
+  --menu-popup-z-index: var(--z-index-popover);
+
+  /* ========== 其他 ========== */
+  /* 涟漪效果 */
+  --menu-ripple-color: var(--color-primary-200);
+  --menu-ripple-duration: 600ms;
+
+  /* 分隔线 */
+  --menu-divider-color: var(--color-border-light);
+  --menu-divider-margin: var(--size-spacing-md);
+}
+
+/* 暗色主题 */
+:root[data-theme-mode='dark'],
+[data-theme='dark'] {
+  --menu-bg: var(--color-bg-container);
+  --menu-bg-hover: var(--color-bg-component-hover);
+  --menu-bg-active: var(--color-primary-950);
+  --menu-submenu-bg: var(--color-bg-page);
+  --menu-popup-bg: var(--color-bg-popover);
+  --menu-text-color: var(--color-text-primary);
+  --menu-text-color-hover: var(--color-primary-300);
+  --menu-text-color-active: var(--color-primary-300);
+  --menu-border-color: var(--color-border);
+  --menu-indicator-color: var(--color-primary-400);
+  --menu-ripple-color: var(--color-primary-800);
+  --menu-item-shadow-hover: 0 2px 8px rgba(0, 0, 0, 0.2);
+}

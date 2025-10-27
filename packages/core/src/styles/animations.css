@@ -1,0 +1,425 @@
+/**
+ * 菜单动画样式
+ * 参考 TDesign 和 Ant Design 设计规范
+ * 
+ * @description
+ * 定义菜单的所有动画效果，使用CSS动画和过渡。
+ * 
+ * 性能优化：
+ * - 使用 transform 和 opacity 属性（GPU 加速）
+ * - 使用 will-change 提示浏览器优化
+ * - 使用 translate3d 启用硬件加速
+ * - 避免使用触发 reflow 的属性（width、height、top、left）
+ */
+
+/* ========== 菜单项动画 ========== */
+
+/* 菜单项悬停时图标放大动画 */
+@keyframes menu-icon-bounce {
+
+  0%,
+  100% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+/* 菜单项激活动画 - 轻微缩放效果 */
+@keyframes menu-item-activate {
+  0% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(0.98);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* 菜单项进入动画 - 从左侧滑入 */
+@keyframes menu-item-slide-in {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* 激活指示器滑入动画 */
+@keyframes menu-indicator-slide-in {
+  from {
+    transform: translateY(-50%) scaleY(0);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateY(-50%) scaleY(1);
+    opacity: 1;
+  }
+}
+
+/* 水平菜单激活指示器 */
+@keyframes menu-indicator-slide-up {
+  from {
+    transform: translateX(-50%) scaleX(0);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateX(-50%) scaleX(1);
+    opacity: 1;
+  }
+}
+
+/* 涟漪效果 */
+@keyframes menu-ripple {
+  0% {
+    width: 0;
+    height: 0;
+    opacity: 0.5;
+  }
+
+  100% {
+    width: 300%;
+    height: 300%;
+    opacity: 0;
+  }
+}
+
+/* ========== Popup 动画 ========== */
+
+/* Popup 淡入动画 - 从上方滑入 */
+@keyframes menu-popup-fade-in {
+  from {
+    opacity: 0;
+    transform: translate3d(0, -12px, 0) scale(0.95);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+
+/* Popup 淡出动画 - 向上滑出 */
+@keyframes menu-popup-fade-out {
+  from {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+
+  to {
+    opacity: 0;
+    transform: translate3d(0, -12px, 0) scale(0.95);
+  }
+}
+
+/* Popup 从下方淡入 */
+@keyframes menu-popup-slide-up {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 12px, 0);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+/* ========== 子菜单动画 ========== */
+
+/* 子菜单展开动画 - 平滑展开 */
+@keyframes submenu-expand {
+  from {
+    max-height: 0;
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+
+  to {
+    max-height: 2000px;
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 子菜单收起动画 - 平滑收起 */
+@keyframes submenu-collapse {
+  from {
+    max-height: 2000px;
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  to {
+    max-height: 0;
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+}
+
+/* 子菜单项依次进入动画 */
+@keyframes submenu-item-fade-in {
+  from {
+    opacity: 0;
+    transform: translateX(-12px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* ========== 角标动画 ========== */
+
+/* 角标脉动动画 */
+@keyframes menu-badge-pulse {
+
+  0%,
+  100% {
+    transform: scale(1);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  50% {
+    transform: scale(1.05);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  }
+}
+
+/* 角标摇摆动画 */
+@keyframes menu-badge-wiggle {
+
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+
+  25% {
+    transform: rotate(-5deg);
+  }
+
+  75% {
+    transform: rotate(5deg);
+  }
+}
+
+/* ========== 应用动画类 ========== */
+
+/* Popup 显示/隐藏 */
+.ldesign-menu-popup--visible {
+  animation: menu-popup-fade-in var(--menu-animation-duration) var(--menu-animation-easing);
+  will-change: transform, opacity;
+}
+
+.ldesign-menu-popup--visible.animation-finished {
+  will-change: auto;
+}
+
+.ldesign-menu-popup--hidden {
+  animation: menu-popup-fade-out var(--menu-animation-duration) var(--menu-animation-easing);
+  will-change: transform, opacity;
+}
+
+/* 子菜单展开/收起 */
+.ldesign-menu-item--expanding>.ldesign-menu-submenu {
+  animation: submenu-expand var(--menu-animation-duration) var(--menu-animation-easing-smooth);
+}
+
+.ldesign-menu-item--collapsing>.ldesign-menu-submenu {
+  animation: submenu-collapse var(--menu-animation-duration) var(--menu-animation-easing-smooth);
+}
+
+/* 子菜单项依次进入 */
+.ldesign-menu-submenu .ldesign-menu-item {
+  animation: submenu-item-fade-in var(--menu-animation-duration-fast) var(--menu-animation-easing) backwards;
+}
+
+.ldesign-menu-submenu .ldesign-menu-item:nth-child(1) {
+  animation-delay: 0ms;
+}
+
+.ldesign-menu-submenu .ldesign-menu-item:nth-child(2) {
+  animation-delay: 30ms;
+}
+
+.ldesign-menu-submenu .ldesign-menu-item:nth-child(3) {
+  animation-delay: 60ms;
+}
+
+.ldesign-menu-submenu .ldesign-menu-item:nth-child(4) {
+  animation-delay: 90ms;
+}
+
+.ldesign-menu-submenu .ldesign-menu-item:nth-child(5) {
+  animation-delay: 120ms;
+}
+
+.ldesign-menu-submenu .ldesign-menu-item:nth-child(n+6) {
+  animation-delay: 150ms;
+}
+
+/* 菜单项初次加载动画 */
+.ldesign-menu--animating .ldesign-menu-item {
+  animation: menu-item-slide-in var(--menu-animation-duration) var(--menu-animation-easing) backwards;
+}
+
+.ldesign-menu--animating .ldesign-menu-item:nth-child(1) {
+  animation-delay: 0ms;
+}
+
+.ldesign-menu--animating .ldesign-menu-item:nth-child(2) {
+  animation-delay: 50ms;
+}
+
+.ldesign-menu--animating .ldesign-menu-item:nth-child(3) {
+  animation-delay: 100ms;
+}
+
+.ldesign-menu--animating .ldesign-menu-item:nth-child(4) {
+  animation-delay: 150ms;
+}
+
+.ldesign-menu--animating .ldesign-menu-item:nth-child(5) {
+  animation-delay: 200ms;
+}
+
+.ldesign-menu--animating .ldesign-menu-item:nth-child(n+6) {
+  animation-delay: 250ms;
+}
+
+/* ========== Vue 过渡动画 ========== */
+
+/* 子菜单展开过渡 */
+.submenu-expand-enter-active {
+  animation: submenu-expand var(--menu-animation-duration) var(--menu-animation-easing-smooth);
+}
+
+.submenu-expand-leave-active {
+  animation: submenu-collapse var(--menu-animation-duration) var(--menu-animation-easing-smooth);
+}
+
+/* Popup 过渡 */
+.menu-popup-fade-enter-active {
+  animation: menu-popup-fade-in var(--menu-animation-duration) var(--menu-animation-easing);
+}
+
+.menu-popup-fade-leave-active {
+  animation: menu-popup-fade-out var(--menu-animation-duration) var(--menu-animation-easing);
+}
+
+/* ========== 折叠菜单过渡 ========== */
+
+.ldesign-menu--vertical.ldesign-menu--collapsed {
+  transition: width var(--menu-animation-duration) var(--menu-animation-easing);
+}
+
+.ldesign-menu--vertical:not(.ldesign-menu--collapsed) {
+  transition: width var(--menu-animation-duration) var(--menu-animation-easing);
+}
+
+/* ========== 性能优化 ========== */
+
+/* 在交互时启用 will-change */
+.ldesign-menu-item:hover .ldesign-menu-item__content {
+  will-change: background-color, color;
+}
+
+.ldesign-menu-item--has-children:hover .ldesign-menu-item__arrow {
+  will-change: transform;
+}
+
+/* 交互结束后禁用 will-change */
+.ldesign-menu-item:not(:hover) .ldesign-menu-item__content {
+  will-change: auto;
+}
+
+.ldesign-menu-item--has-children:not(:hover) .ldesign-menu-item__arrow {
+  will-change: auto;
+}
+
+/* ========== 禁用动画 ========== */
+
+/* 全局禁用动画 */
+.ldesign-menu--no-animation,
+.ldesign-menu--no-animation * {
+  animation: none !important;
+  transition: none !important;
+}
+
+/* 减少动画（用户偏好设置） */
+@media (prefers-reduced-motion: reduce) {
+
+  .ldesign-menu-item,
+  .ldesign-menu-item__content,
+  .ldesign-menu-item__icon,
+  .ldesign-menu-item__arrow,
+  .ldesign-menu-submenu,
+  .ldesign-menu-popup {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .ldesign-menu-item__badge {
+    animation: none !important;
+  }
+}
+
+/* ========== 悬停效果增强 ========== */
+
+/* 菜单项悬停时的微妙变换 */
+.ldesign-menu-item__content:hover {
+  transform: translateX(2px);
+}
+
+.ldesign-menu--horizontal .ldesign-menu-item__content:hover {
+  transform: translateY(-2px);
+}
+
+/* 图标悬停动画 */
+.ldesign-menu-item__content:hover .ldesign-menu-item__icon {
+  animation: menu-icon-bounce 0.4s ease;
+}
+
+/* ========== 加载动画 ========== */
+
+/* 菜单加载骨架屏动画 */
+@keyframes menu-skeleton-loading {
+  0% {
+    background-position: -200px 0;
+  }
+
+  100% {
+    background-position: calc(200px + 100%) 0;
+  }
+}
+
+.ldesign-menu--loading .ldesign-menu-item__content {
+  background: linear-gradient(90deg,
+      var(--menu-bg) 0%,
+      var(--menu-bg-hover) 50%,
+      var(--menu-bg) 100%);
+  background-size: 200px 100%;
+  animation: menu-skeleton-loading 1.5s ease-in-out infinite;
+  pointer-events: none;
+}
+
+/* ========== 自定义缓动函数 ========== */
+:root {
+  --menu-ease-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  --menu-ease-smooth: cubic-bezier(0.34, 0.69, 0.1, 1);
+  --menu-ease-sharp: cubic-bezier(0.4, 0, 0.6, 1);
+}

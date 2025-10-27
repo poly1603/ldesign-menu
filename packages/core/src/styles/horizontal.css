@@ -1,0 +1,70 @@
+/**
+ * 横向菜单样式
+ */
+
+.ldesign-menu--horizontal {
+  display: flex;
+  width: 100%;
+  height: auto;
+  border-bottom: 1px solid var(--menu-border-color);
+}
+
+.ldesign-menu--horizontal>.ldesign-menu-list {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+.ldesign-menu--horizontal>.ldesign-menu-list::-webkit-scrollbar {
+  height: 4px;
+}
+
+.ldesign-menu--horizontal>.ldesign-menu-list::-webkit-scrollbar-thumb {
+  background-color: var(--color-gray-400);
+  border-radius: 2px;
+}
+
+.ldesign-menu--horizontal .ldesign-menu-item {
+  flex-shrink: 0;
+}
+
+.ldesign-menu--horizontal .ldesign-menu-item__content {
+  position: relative;
+  padding: var(--menu-item-padding-y) var(--size-spacing-xl);
+  border-radius: 0;
+}
+
+.ldesign-menu--horizontal .ldesign-menu-item__content::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background-color: transparent;
+  transition: background-color var(--menu-animation-duration) var(--menu-animation-easing);
+}
+
+.ldesign-menu--horizontal .ldesign-menu-item--active>.ldesign-menu-item__content {
+  background-color: transparent;
+}
+
+.ldesign-menu--horizontal .ldesign-menu-item--active>.ldesign-menu-item__content::after {
+  background-color: var(--menu-border-color-active);
+}
+
+.ldesign-menu--horizontal .ldesign-menu-item__arrow {
+  transform: rotate(90deg);
+}
+
+.ldesign-menu--horizontal .ldesign-menu-item--expanded>.ldesign-menu-item__content .ldesign-menu-item__arrow {
+  transform: rotate(-90deg);
+}
+
+/* 响应式：更多菜单 */
+.ldesign-menu--horizontal .ldesign-menu-item--more {
+  margin-left: auto;
+}

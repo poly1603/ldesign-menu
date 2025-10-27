@@ -1,0 +1,94 @@
+{
+  "name": "@ldesign/menu-vue",
+  "version": "0.1.0",
+  "description": "LDesign Menu Vue 3 Components - Modern menu system for Vue 3",
+  "keywords": [
+    "ldesign",
+    "menu",
+    "vue",
+    "vue3",
+    "navigation",
+    "navbar",
+    "sidebar",
+    "typescript"
+  ],
+  "author": "LDesign Team",
+  "license": "MIT",
+  "type": "module",
+  "sideEffects": [
+    "*.css",
+    "*.vue"
+  ],
+  "exports": {
+    ".": {
+      "types": "./es/index.d.ts",
+      "import": "./es/index.js",
+      "require": "./lib/index.cjs"
+    },
+    "./components": {
+      "types": "./es/components/index.d.ts",
+      "import": "./es/components/index.js",
+      "require": "./lib/components/index.cjs"
+    },
+    "./components/*": {
+      "types": "./es/components/*.d.ts",
+      "import": "./es/components/*.js",
+      "require": "./lib/components/*.cjs"
+    },
+    "./composables": {
+      "types": "./es/composables/index.d.ts",
+      "import": "./es/composables/index.js",
+      "require": "./lib/composables/index.cjs"
+    },
+    "./composables/*": {
+      "types": "./es/composables/*.d.ts",
+      "import": "./es/composables/*.js",
+      "require": "./lib/composables/*.cjs"
+    },
+    "./es/components/index.css": "./es/components/index.css",
+    "./es/components/MenuItem.vue.css": "./es/components/MenuItem.vue.css",
+    "./es/index.css": "./es/index.css",
+    "./es/plugin.css": "./es/plugin.css",
+    "./lib/components/index.css": "./lib/components/index.css",
+    "./lib/components/MenuItem.vue.css": "./lib/components/MenuItem.vue.css",
+    "./lib/index.css": "./lib/index.css",
+    "./lib/plugin.css": "./lib/plugin.css"
+  },
+  "main": "./lib/index.cjs",
+  "module": "./es/index.js",
+  "types": "./es/index.d.ts",
+  "unpkg": "./dist/index.min.js",
+  "jsdelivr": "./dist/index.min.js",
+  "files": [
+    "README.md",
+    "LICENSE",
+    "package.json",
+    "es",
+    "lib"
+  ],
+  "scripts": {
+    "build": "ldesign-builder build",
+    "build:watch": "ldesign-builder build --watch",
+    "dev": "ldesign-builder build --mode development --watch",
+    "clean": "rimraf es lib dist coverage",
+    "prepublishOnly": "pnpm run clean && pnpm run build",
+    "type-check": "vue-tsc --noEmit"
+  },
+  "dependencies": {
+    "@ldesign/menu-core": "workspace:*"
+  },
+  "peerDependencies": {
+    "vue": "^3.3.0"
+  },
+  "devDependencies": {
+    "@ldesign/builder": "link:../../../../tools/builder",
+    "@vitejs/plugin-vue": "^5.0.0",
+    "typescript": "^5.7.3",
+    "vue-tsc": "^2.0.0",
+    "rimraf": "^5.0.5"
+  },
+  "engines": {
+    "node": ">=16.0.0",
+    "pnpm": ">=8.0.0"
+  }
+}

@@ -1,0 +1,7 @@
+/**
+ * 主题样式导出
+ */
+
+@import './default.css';
+@import './minimal.css';
+@import './material.css';
