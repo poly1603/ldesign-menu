@@ -183,7 +183,7 @@ export class ErrorHandler {
    * @private
    */
   private showErrorMessage(error: MenuError): void {
-    const message = this.getUser  FriendlyMessage(error)
+    const message = this.getUserFriendlyMessage(error)
     // 这里可以集成 toast 或 notification 组件
     console.warn('用户提示:', message)
   }
