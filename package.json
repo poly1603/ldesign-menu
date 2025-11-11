@@ -36,6 +36,16 @@
       "import": "./es/core/*.js",
       "require": "./lib/core/*.cjs"
     },
+    "./features": {
+      "types": "./es/features/index.d.ts",
+      "import": "./es/features/index.js",
+      "require": "./lib/features/index.cjs"
+    },
+    "./features/*": {
+      "types": "./es/features/*.d.ts",
+      "import": "./es/features/*.js",
+      "require": "./lib/features/*.cjs"
+    },
     "./react/*": {
       "types": "./es/react/*.d.ts",
       "import": "./es/react/*.js",
@@ -72,9 +82,7 @@
       "require": "./lib/vue/*.cjs"
     },
     "./es/index.css": "./es/index.css",
-    "./lib/index.css": "./lib/index.css",
-    "./dist/index.css": "./dist/index.css",
-    "./dist/index.min.css": "./dist/index.min.css"
+    "./lib/index.css": "./lib/index.css"
   },
   "main": "./lib/index.cjs",
   "module": "./es/index.js",
@@ -86,8 +94,7 @@
     "LICENSE",
     "package.json",
     "es",
-    "lib",
-    "dist"
+    "lib"
   ],
   "scripts": {
     "build": "ldesign-builder build",
