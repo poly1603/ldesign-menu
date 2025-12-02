@@ -1,25 +1,21 @@
 {
   "extends": "../../../../tsconfig.json",
   "compilerOptions": {
-    "rootDir": "src",
-    "outDir": "es",
-    "declaration": true,
-    "declarationMap": true,
-    "composite": true,
+    "composite": false,
     "jsx": "preserve",
-    "types": ["vite/client"]
+    "lib": ["DOM", "DOM.Iterable", "ES2020"],
+    "baseUrl": ".",
+    "paths": {
+      "@ldesign/menu-core": ["../core/src/index.ts"]
+    },
+    "types": ["node", "vite/client"],
+    "declaration": true,
+    "declarationDir": "./esm",
+    "declarationMap": true,
+    "outDir": "./esm",
+    "sourceMap": true
   },
-  "include": [
-    "src/**/*",
-    "src/**/*.vue"
-  ],
-  "exclude": [
-    "node_modules",
-    "es",
-    "lib",
-    "dist",
-    "**/*.test.ts",
-    "**/*.spec.ts"
-  ]
+  "include": ["src/**/*", "src/**/*.vue", "../core/src/**/*"],
+  "exclude": ["node_modules", "dist", "es", "esm", "cjs", "lib", "__tests__", "examples"]
 }
 

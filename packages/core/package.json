@@ -1,102 +1,92 @@
 {
   "name": "@ldesign/menu-core",
   "version": "0.1.0",
-  "description": "LDesign Menu Core - Framework-agnostic menu system core logic",
+  "description": "LDesign 菜单系统 - 框架无关的核心模块",
   "keywords": [
-    "ldesign",
     "menu",
-    "core",
     "navigation",
-    "framework-agnostic",
+    "sidebar",
+    "navbar",
+    "submenu",
+    "ldesign",
     "typescript"
   ],
   "author": "LDesign Team",
   "license": "MIT",
   "type": "module",
-  "sideEffects": [
-    "*.css"
-  ],
+  "sideEffects": false,
   "exports": {
     ".": {
       "types": "./es/index.d.ts",
       "import": "./es/index.js",
-      "require": "./lib/index.cjs"
+      "require": "./lib/index.cjs",
+      "default": "./es/index.js"
     },
-    "./core": {
-      "types": "./es/core/index.d.ts",
-      "import": "./es/core/index.js",
-      "require": "./lib/core/index.cjs"
+    "./managers": {
+      "types": "./es/managers/index.d.ts",
+      "import": "./es/managers/index.js",
+      "require": "./lib/managers/index.cjs",
+      "default": "./es/managers/index.js"
     },
-    "./core/*": {
-      "types": "./es/core/*.d.ts",
-      "import": "./es/core/*.js",
-      "require": "./lib/core/*.cjs"
-    },
-    "./features": {
-      "types": "./es/features/index.d.ts",
-      "import": "./es/features/index.js",
-      "require": "./lib/features/index.cjs"
-    },
-    "./features/*": {
-      "types": "./es/features/*.d.ts",
-      "import": "./es/features/*.js",
-      "require": "./lib/features/*.cjs"
+    "./managers/*": {
+      "types": "./es/managers/*.d.ts",
+      "import": "./es/managers/*.js",
+      "require": "./lib/managers/*.cjs",
+      "default": "./es/managers/*.js"
     },
     "./types": {
       "types": "./es/types/index.d.ts",
       "import": "./es/types/index.js",
-      "require": "./lib/types/index.cjs"
+      "require": "./lib/types/index.cjs",
+      "default": "./es/types/index.js"
     },
     "./types/*": {
       "types": "./es/types/*.d.ts",
       "import": "./es/types/*.js",
-      "require": "./lib/types/*.cjs"
+      "require": "./lib/types/*.cjs",
+      "default": "./es/types/*.js"
     },
     "./utils": {
       "types": "./es/utils/index.d.ts",
       "import": "./es/utils/index.js",
-      "require": "./lib/utils/index.cjs"
+      "require": "./lib/utils/index.cjs",
+      "default": "./es/utils/index.js"
     },
     "./utils/*": {
       "types": "./es/utils/*.d.ts",
       "import": "./es/utils/*.js",
-      "require": "./lib/utils/*.cjs"
+      "require": "./lib/utils/*.cjs",
+      "default": "./es/utils/*.js"
     },
-    "./es/index.css": "./es/index.css",
-    "./lib/index.css": "./lib/index.css",
-    "./dist/index.umd.css": "./dist/index.umd.css",
-    "./dist/index.umd.min.css": "./dist/index.umd.min.css"
+    "./package.json": "./package.json"
   },
   "main": "./lib/index.cjs",
   "module": "./es/index.js",
   "types": "./es/index.d.ts",
-  "unpkg": "./dist/index.min.js",
-  "jsdelivr": "./dist/index.min.js",
+  "unpkg": "./dist/index.js",
+  "jsdelivr": "./dist/index.js",
   "files": [
     "README.md",
     "LICENSE",
-    "package.json",
+    "CHANGELOG.md",
     "es",
     "lib",
     "dist"
   ],
   "scripts": {
     "build": "ldesign-builder build",
-    "build:watch": "ldesign-builder build --watch",
-    "dev": "ldesign-builder build --mode development --watch",
-    "clean": "rimraf es lib dist coverage",
+    "dev": "ldesign-builder build --watch",
+    "clean": "rimraf dist es lib",
+    "lint": "eslint . --fix",
     "type-check": "tsc --noEmit"
   },
-  "dependencies": {
-    "nanoid": "^5.0.9"
-  },
   "devDependencies": {
-    "@ldesign/builder": "link:../../../../tools/builder",
-    "typescript": "^5.7.3",
-    "rimraf": "^5.0.5"
+    "@antfu/eslint-config": "^6.0.0",
+    "@ldesign/builder": "workspace:*",
+    "eslint": "^9.18.0",
+    "rimraf": "^5.0.0",
+    "typescript": "^5.7.3"
   },
-  "engines": {
-    "node": ">=16.0.0",
-    "pnpm": ">=8.0.0"
-  }
+  "typings": "./es/index.d.ts",
+  "browser": "./dist/index.js"
 }

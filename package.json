@@ -1,7 +1,10 @@
 {
   "name": "@ldesign/menu",
+  "type": "module",
   "version": "0.1.0",
   "description": "LDesign 菜单系统 - 现代化菜单组件，支持横向/纵向布局、无限层级、多种展开模式",
+  "author": "LDesign Team",
+  "license": "MIT",
   "keywords": [
     "ldesign",
     "menu",
@@ -14,9 +17,6 @@
     "popup",
     "responsive"
   ],
-  "author": "LDesign Team",
-  "license": "MIT",
-  "type": "module",
   "sideEffects": [
     "*.css"
   ],
@@ -86,16 +86,20 @@
   },
   "main": "./lib/index.cjs",
   "module": "./es/index.js",
-  "types": "./es/index.d.ts",
   "unpkg": "./dist/index.min.js",
   "jsdelivr": "./dist/index.min.js",
+  "types": "./es/index.d.ts",
   "files": [
-    "README.md",
     "LICENSE",
-    "package.json",
+    "README.md",
     "es",
-    "lib"
+    "lib",
+    "package.json"
   ],
+  "engines": {
+    "node": ">=16.0.0",
+    "pnpm": ">=8.0.0"
+  },
   "scripts": {
     "build": "ldesign-builder build",
     "build:watch": "ldesign-builder build --watch",
@@ -104,31 +108,27 @@
     "lint": "eslint . --fix",
     "type-check": "tsc --noEmit"
   },
+  "peerDependencies": {
+    "react": "^18.0.0",
+    "vue": "^3.3.0"
+  },
+  "peerDependenciesMeta": {
+    "react": {
+      "optional": true
+    },
+    "vue": {
+      "optional": true
+    }
+  },
   "dependencies": {
     "@ldesign/shared": "workspace:*",
     "nanoid": "^5.0.9"
   },
-  "peerDependencies": {
-    "vue": "^3.3.0",
-    "react": "^18.0.0"
-  },
   "devDependencies": {
-    "@ldesign/builder": "workspace:*",
     "@antfu/eslint-config": "^6.0.0",
+    "@ldesign/builder": "workspace:*",
     "eslint": "^9.18.0",
-    "typescript": "^5.7.3",
-    "rimraf": "^5.0.5"
-  },
-  "engines": {
-    "node": ">=16.0.0",
-    "pnpm": ">=8.0.0"
-  },
-  "peerDependenciesMeta": {
-    "vue": {
-      "optional": true
-    },
-    "react": {
-      "optional": true
-    }
+    "rimraf": "^5.0.5",
+    "typescript": "^5.7.3"
   }
 }

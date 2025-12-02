@@ -1,0 +1,102 @@
+/**
+ * 菜单组件 CSS 变量
+ * 参考 TDesign 设计规范
+ */
+
+:root {
+  /* 颜色 - 浅色主题（默认） */
+  --l-menu-bg-color: transparent;
+  --l-menu-text-color: var(--color-text-primary, rgba(0, 0, 0, 0.9));
+  --l-menu-text-color-secondary: var(--color-text-secondary, rgba(0, 0, 0, 0.6));
+  --l-menu-text-color-disabled: var(--color-text-disabled, rgba(0, 0, 0, 0.26));
+  --l-menu-border-color: var(--color-border, #e7e7e7);
+  --l-menu-hover-bg-color: var(--color-bg-hover, rgba(0, 0, 0, 0.04));
+  --l-menu-active-bg-color: var(--color-primary-bg, rgba(59, 130, 246, 0.1));
+  --l-menu-active-text-color: var(--color-primary, #3b82f6);
+  --l-menu-selected-bg-color: var(--color-primary-bg, rgba(59, 130, 246, 0.1));
+  --l-menu-selected-text-color: var(--color-primary, #3b82f6);
+  --l-menu-group-title-color: var(--color-text-tertiary, rgba(0, 0, 0, 0.4));
+
+  /* 尺寸 */
+  --l-menu-item-height: 44px;
+  --l-menu-item-padding-x: 16px;
+  --l-menu-icon-size: 20px;
+  --l-menu-icon-margin-right: 12px;
+  --l-menu-arrow-size: 16px;
+  --l-menu-group-title-height: 32px;
+  --l-menu-divider-margin: 8px;
+
+  /* 圆角 */
+  --l-menu-border-radius: 8px;
+
+  /* 动画 */
+  --l-menu-transition-duration: 0.2s;
+  --l-menu-transition-timing: cubic-bezier(0.38, 0, 0.24, 1);
+
+  /* 阴影 */
+  --l-menu-popup-shadow: 0 6px 16px -8px rgba(0, 0, 0, 0.08),
+    0 9px 28px 0 rgba(0, 0, 0, 0.05),
+    0 12px 48px 16px rgba(0, 0, 0, 0.03);
+
+  /* 弹出菜单 */
+  --l-menu-popup-bg: #fff;
+  --l-menu-popup-border-radius: 8px;
+  --l-menu-popup-border-color: rgba(0, 0, 0, 0.06);
+}
+
+/* 浅色主题 */
+.l-menu--light {
+  --l-menu-bg-color: transparent;
+  --l-menu-text-color: var(--color-text-primary, rgba(0, 0, 0, 0.9));
+  --l-menu-text-color-secondary: var(--color-text-secondary, rgba(0, 0, 0, 0.6));
+  --l-menu-text-color-disabled: var(--color-text-disabled, rgba(0, 0, 0, 0.26));
+  --l-menu-hover-bg-color: var(--color-bg-hover, rgba(0, 0, 0, 0.04));
+  --l-menu-active-text-color: var(--color-primary, #3b82f6);
+  --l-menu-selected-bg-color: var(--color-primary-bg, rgba(59, 130, 246, 0.1));
+  --l-menu-selected-text-color: var(--color-primary, #3b82f6);
+}
+
+/* 深色主题 */
+.l-menu--dark {
+  --l-menu-bg-color: transparent;
+  --l-menu-text-color: rgba(255, 255, 255, 0.9);
+  --l-menu-text-color-secondary: rgba(255, 255, 255, 0.55);
+  --l-menu-text-color-disabled: rgba(255, 255, 255, 0.3);
+  --l-menu-border-color: rgba(255, 255, 255, 0.1);
+  --l-menu-hover-bg-color: rgba(255, 255, 255, 0.08);
+  --l-menu-active-bg-color: rgba(59, 130, 246, 0.2);
+  --l-menu-active-text-color: #60a5fa;
+  --l-menu-selected-bg-color: rgba(59, 130, 246, 0.2);
+  --l-menu-selected-text-color: #60a5fa;
+  --l-menu-group-title-color: rgba(255, 255, 255, 0.35);
+}
+
+/* 跟随系统暗色模式 - 支持 data-theme 和 data-mode 属性 */
+[data-theme="dark"] .l-menu--light,
+[data-mode="dark"] .l-menu--light,
+.dark .l-menu--light {
+  --l-menu-text-color: rgba(255, 255, 255, 0.9);
+  --l-menu-text-color-secondary: rgba(255, 255, 255, 0.55);
+  --l-menu-text-color-disabled: rgba(255, 255, 255, 0.3);
+  --l-menu-border-color: rgba(255, 255, 255, 0.1);
+  --l-menu-hover-bg-color: rgba(255, 255, 255, 0.08);
+  --l-menu-active-text-color: #60a5fa;
+  --l-menu-selected-bg-color: rgba(59, 130, 246, 0.15);
+  --l-menu-selected-text-color: #60a5fa;
+  --l-menu-group-title-color: rgba(255, 255, 255, 0.35);
+}
+
+/* 当菜单组件本身设置了深色主题属性时 */
+[data-theme="dark"] .l-menu,
+[data-mode="dark"] .l-menu,
+.dark .l-menu {
+  --l-menu-text-color: rgba(255, 255, 255, 0.9);
+  --l-menu-text-color-secondary: rgba(255, 255, 255, 0.55);
+  --l-menu-text-color-disabled: rgba(255, 255, 255, 0.3);
+  --l-menu-border-color: rgba(255, 255, 255, 0.1);
+  --l-menu-hover-bg-color: rgba(255, 255, 255, 0.08);
+  --l-menu-active-text-color: #60a5fa;
+  --l-menu-selected-bg-color: rgba(59, 130, 246, 0.15);
+  --l-menu-selected-text-color: #60a5fa;
+  --l-menu-group-title-color: rgba(255, 255, 255, 0.35);
+}

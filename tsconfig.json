@@ -2,15 +2,15 @@
   "extends": "../../tsconfig.json",
   "compilerOptions": {
     "composite": false,
-    "rootDir": "./src",
-    "outDir": "./es",
-    "declarationDir": "./es",
-    "declaration": true,
-    "declarationMap": true,
-    "sourceMap": true,
     "jsx": "preserve",
     "lib": ["ES2020", "DOM", "DOM.Iterable"],
-    "types": ["node"]
+    "rootDir": "./src",
+    "types": ["node"],
+    "declaration": true,
+    "declarationDir": "./es",
+    "declarationMap": true,
+    "outDir": "./es",
+    "sourceMap": true
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist", "es", "lib", "__tests__", "examples"]

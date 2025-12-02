@@ -1,76 +1,75 @@
 {
   "name": "@ldesign/menu-vue",
   "version": "0.1.0",
-  "description": "LDesign Menu Vue 3 Components - Modern menu system for Vue 3",
+  "description": "LDesign 菜单系统 - Vue 3 适配器",
   "keywords": [
-    "ldesign",
     "menu",
+    "navigation",
+    "sidebar",
+    "navbar",
     "vue",
     "vue3",
-    "navigation",
-    "navbar",
-    "sidebar",
+    "composable",
+    "ldesign",
     "typescript"
   ],
   "author": "LDesign Team",
   "license": "MIT",
   "type": "module",
-  "sideEffects": [
-    "*.css",
-    "*.vue"
-  ],
+  "sideEffects": false,
   "exports": {
     ".": {
-      "types": "./es/index.d.ts",
-      "import": "./es/index.js",
-      "require": "./lib/index.cjs"
+      "types": "./esm/index.d.ts",
+      "import": "./esm/index.js",
+      "require": "./cjs/index.cjs",
+      "default": "./esm/index.js"
     },
     "./components": {
-      "types": "./es/components/index.d.ts",
-      "import": "./es/components/index.js",
-      "require": "./lib/components/index.cjs"
+      "types": "./esm/components/index.d.ts",
+      "import": "./esm/components/index.js",
+      "require": "./cjs/components/index.cjs",
+      "default": "./esm/components/index.js"
     },
     "./components/*": {
-      "types": "./es/components/*.d.ts",
-      "import": "./es/components/*.js",
-      "require": "./lib/components/*.cjs"
+      "types": "./esm/components/*.d.ts",
+      "import": "./esm/components/*.js",
+      "require": "./cjs/components/*.cjs",
+      "default": "./esm/components/*.js"
     },
     "./composables": {
-      "types": "./es/composables/index.d.ts",
-      "import": "./es/composables/index.js",
-      "require": "./lib/composables/index.cjs"
+      "types": "./esm/composables/index.d.ts",
+      "import": "./esm/composables/index.js",
+      "require": "./cjs/composables/index.cjs",
+      "default": "./esm/composables/index.js"
     },
     "./composables/*": {
-      "types": "./es/composables/*.d.ts",
-      "import": "./es/composables/*.js",
-      "require": "./lib/composables/*.cjs"
+      "types": "./esm/composables/*.d.ts",
+      "import": "./esm/composables/*.js",
+      "require": "./cjs/composables/*.cjs",
+      "default": "./esm/composables/*.js"
     },
-    "./es/components/index.css": "./es/components/index.css",
-    "./es/components/MenuItem.vue.css": "./es/components/MenuItem.vue.css",
-    "./es/index.css": "./es/index.css",
-    "./es/plugin.css": "./es/plugin.css",
-    "./lib/components/index.css": "./lib/components/index.css",
-    "./lib/components/MenuItem.vue.css": "./lib/components/MenuItem.vue.css",
-    "./lib/index.css": "./lib/index.css",
-    "./lib/plugin.css": "./lib/plugin.css"
+    "./styles": "./src/styles/index.css",
+    "./styles/*": "./src/styles/*",
+    "./package.json": "./package.json"
   },
-  "main": "./lib/index.cjs",
-  "module": "./es/index.js",
-  "types": "./es/index.d.ts",
-  "unpkg": "./dist/index.min.js",
-  "jsdelivr": "./dist/index.min.js",
+  "main": "./cjs/index.cjs",
+  "module": "./esm/index.js",
+  "types": "./esm/index.d.ts",
+  "unpkg": "./dist/index.js",
+  "jsdelivr": "./dist/index.js",
   "files": [
     "README.md",
     "LICENSE",
-    "package.json",
-    "es",
-    "lib"
+    "CHANGELOG.md",
+    "esm",
+    "cjs",
+    "src/styles"
   ],
   "scripts": {
     "build": "ldesign-builder build",
-    "build:watch": "ldesign-builder build --watch",
-    "dev": "ldesign-builder build --mode development --watch",
-    "clean": "rimraf es lib dist coverage",
+    "dev": "ldesign-builder build --watch",
+    "clean": "rimraf dist es esm cjs lib",
+    "lint": "eslint . --fix",
     "type-check": "vue-tsc --noEmit"
   },
   "dependencies": {
@@ -80,14 +79,15 @@
     "vue": "^3.3.0"
   },
   "devDependencies": {
-    "@ldesign/builder": "link:../../../../tools/builder",
+    "@antfu/eslint-config": "^6.0.0",
+    "@ldesign/builder": "workspace:*",
     "@vitejs/plugin-vue": "^5.0.0",
+    "eslint": "^9.18.0",
+    "rimraf": "^5.0.0",
     "typescript": "^5.7.3",
-    "vue-tsc": "^2.0.0",
-    "rimraf": "^5.0.5"
+    "vue": "^3.3.0",
+    "vue-tsc": "^3.0.0"
   },
-  "engines": {
-    "node": ">=16.0.0",
-    "pnpm": ">=8.0.0"
-  }
+  "typings": "./esm/index.d.ts",
+  "browser": "./dist/index.js"
 }

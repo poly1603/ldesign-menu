@@ -1,0 +1,36 @@
+/**
+ * 菜单分组样式
+ */
+
+/* 菜单分组 */
+.l-menu-group {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.l-menu-group__title {
+  display: flex;
+  align-items: center;
+  height: var(--l-menu-group-title-height);
+  padding-right: var(--l-menu-item-padding-x);
+  font-size: 12px;
+  color: var(--l-menu-group-title-color);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.l-menu-group__content {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* 分隔线 */
+.l-menu-divider {
+  height: 1px;
+  margin: var(--l-menu-divider-margin) 0;
+  background-color: var(--l-menu-border-color);
+  list-style: none;
+}
+

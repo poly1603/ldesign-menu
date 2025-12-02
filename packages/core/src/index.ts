@@ -1,20 +1,15 @@
 /**
  * @ldesign/menu-core
- * Framework-agnostic menu system core
+ * LDesign 菜单系统 - 框架无关的核心模块
+ * @packageDocumentation
  */
 
-// Export core classes
-export * from './core'
+// 管理器导出
+export * from './managers'
 
-// Export types
+// 类型导出
 export * from './types'
 
-// Export utils
+// 工具函数导出
 export * from './utils'
-
-// Export features
-export * from './features'
-
-// Import styles
-import './styles/index.css'
 

@@ -1,16 +1,9 @@
 /**
- * @ldesign/menu-vue
- * LDesign 菜单系统 - Vue 3 组件
- * @packageDocumentation
+ * 类型重新导出
+ * @module types
  */
 
-// 组件导出
-export * from './components'
-
-// Composables 导出
-export * from './composables'
-
-// 重新导出类型和工具函数（排除与组件名冲突的类型）
+// 从 core 包导入类型
 export type {
   ExpandMode,
   FlatMenuItem,
@@ -21,9 +14,8 @@ export type {
   MenuFilterConfig,
   MenuGroupItem,
   MenuHoverEventParams,
+  MenuItem,
   MenuItemBase,
-  // MenuItem 类型与组件名冲突，使用 MenuItemData 别名
-  MenuItem as MenuItemData,
   MenuItemPath,
   MenuItemTarget,
   MenuItemType,
@@ -37,7 +29,7 @@ export type {
   MenuTheme,
   SubMenuPlacement,
   TriggerMode,
-} from './types'
+} from '@ldesign/menu-core'
 
 export {
   DEFAULT_MENU_CONFIG,
@@ -55,5 +47,5 @@ export {
   isGroup,
   isHidden,
   MenuManager,
-} from './types'
+} from '@ldesign/menu-core'
 
