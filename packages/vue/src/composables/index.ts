@@ -25,3 +25,9 @@ export type {
   UseMenuStateReturn,
 } from './useMenuState'
 
+export { useMenuKeyboard } from './useMenuKeyboard'
+
+export type {
+  UseMenuKeyboardOptions,
+} from './useMenuKeyboard'
+

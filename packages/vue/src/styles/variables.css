@@ -1,74 +1,144 @@
 /**
  * 菜单组件 CSS 变量
  * 参考 TDesign 设计规范
+ * 优化交互体验和视觉效果
  */
 
 :root {
-  /* 颜色 - 浅色主题（默认） */
+  /* ========== 颜色系统 - 浅色主题（默认） ========== */
   --l-menu-bg-color: transparent;
   --l-menu-text-color: var(--color-text-primary, rgba(0, 0, 0, 0.9));
   --l-menu-text-color-secondary: var(--color-text-secondary, rgba(0, 0, 0, 0.6));
   --l-menu-text-color-disabled: var(--color-text-disabled, rgba(0, 0, 0, 0.26));
   --l-menu-border-color: var(--color-border, #e7e7e7);
-  --l-menu-hover-bg-color: var(--color-bg-hover, rgba(0, 0, 0, 0.04));
-  --l-menu-active-bg-color: var(--color-primary-bg, rgba(59, 130, 246, 0.1));
+
+  /* Hover 状态 - 更明显的反馈 */
+  --l-menu-hover-bg-color: var(--color-bg-hover, rgba(0, 0, 0, 0.05));
+  --l-menu-hover-text-color: var(--color-primary, #3b82f6);
+
+  /* Active 状态 */
+  --l-menu-active-bg-color: var(--color-primary-bg, rgba(59, 130, 246, 0.08));
   --l-menu-active-text-color: var(--color-primary, #3b82f6);
-  --l-menu-selected-bg-color: var(--color-primary-bg, rgba(59, 130, 246, 0.1));
+
+  /* Selected 状态 - 更突出的选中效果 */
+  --l-menu-selected-bg-color: var(--color-primary-bg, rgba(59, 130, 246, 0.12));
   --l-menu-selected-text-color: var(--color-primary, #3b82f6);
+  --l-menu-selected-indicator-color: var(--color-primary, #3b82f6);
+
+  /* Focus 状态 - 键盘导航焦点 */
+  --l-menu-focus-outline-color: var(--color-primary, #3b82f6);
+  --l-menu-focus-outline-width: 2px;
+  --l-menu-focus-outline-offset: 2px;
+
+  /* 分组标题 */
   --l-menu-group-title-color: var(--color-text-tertiary, rgba(0, 0, 0, 0.4));
 
-  /* 尺寸 */
+  /* ========== 尺寸系统 ========== */
+  /* 菜单项高度 - 参考 TDesign 44px */
   --l-menu-item-height: 44px;
+  --l-menu-item-height-compact: 36px;
+  --l-menu-item-height-large: 52px;
+
+  /* 内边距 */
   --l-menu-item-padding-x: 16px;
+  --l-menu-item-padding-y: 8px;
+
+  /* 图标 */
   --l-menu-icon-size: 20px;
   --l-menu-icon-margin-right: 12px;
+
+  /* 箭头 */
   --l-menu-arrow-size: 16px;
+
+  /* 分组标题 */
   --l-menu-group-title-height: 32px;
+
+  /* 分割线 */
   --l-menu-divider-margin: 8px;
 
-  /* 圆角 */
-  --l-menu-border-radius: 8px;
+  /* 选中指示器 */
+  --l-menu-indicator-width: 3px;
+  --l-menu-indicator-height: 60%;
 
-  /* 动画 */
-  --l-menu-transition-duration: 0.2s;
-  --l-menu-transition-timing: cubic-bezier(0.38, 0, 0.24, 1);
-
-  /* 阴影 */
-  --l-menu-popup-shadow: 0 6px 16px -8px rgba(0, 0, 0, 0.08),
-    0 9px 28px 0 rgba(0, 0, 0, 0.05),
-    0 12px 48px 16px rgba(0, 0, 0, 0.03);
-
-  /* 弹出菜单 */
-  --l-menu-popup-bg: #fff;
+  /* ========== 圆角系统 ========== */
+  --l-menu-border-radius: 6px;
+  --l-menu-border-radius-small: 4px;
   --l-menu-popup-border-radius: 8px;
+
+  /* ========== 动画系统 ========== */
+  /* 基础过渡 */
+  --l-menu-transition-duration: 0.2s;
+  --l-menu-transition-duration-fast: 0.15s;
+  --l-menu-transition-duration-slow: 0.3s;
+
+  /* 缓动函数 - 参考 TDesign 的流畅曲线 */
+  --l-menu-transition-timing: cubic-bezier(0.38, 0, 0.24, 1);
+  --l-menu-transition-timing-ease-out: cubic-bezier(0.33, 1, 0.68, 1);
+  --l-menu-transition-timing-ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --l-menu-transition-timing-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  /* 展开/收起动画 */
+  --l-menu-expand-duration: 0.25s;
+  --l-menu-collapse-duration: 0.2s;
+
+  /* ========== 阴影系统 ========== */
+  /* 弹出菜单阴影 - 参考 TDesign 的层次感 */
+  --l-menu-popup-shadow:
+    0 3px 14px 2px rgba(0, 0, 0, 0.05),
+    0 8px 10px 1px rgba(0, 0, 0, 0.06),
+    0 5px 5px -3px rgba(0, 0, 0, 0.1);
+
+  /* Hover 阴影 */
+  --l-menu-hover-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+
+  /* ========== 弹出菜单 ========== */
+  --l-menu-popup-bg: #fff;
   --l-menu-popup-border-color: rgba(0, 0, 0, 0.06);
+  --l-menu-popup-padding: 6px;
+  --l-menu-popup-min-width: 180px;
+
+  /* ========== Z-Index 层级 ========== */
+  --l-menu-popup-z-index: 1050;
+  --l-menu-tooltip-z-index: 1060;
+
+  /* ========== 涟漪效果 ========== */
+  --l-menu-ripple-color: rgba(0, 0, 0, 0.1);
+  --l-menu-ripple-duration: 0.6s;
 }
 
-/* 浅色主题 */
+/* ========== 浅色主题 ========== */
 .l-menu--light {
   --l-menu-bg-color: transparent;
   --l-menu-text-color: var(--color-text-primary, rgba(0, 0, 0, 0.9));
   --l-menu-text-color-secondary: var(--color-text-secondary, rgba(0, 0, 0, 0.6));
   --l-menu-text-color-disabled: var(--color-text-disabled, rgba(0, 0, 0, 0.26));
-  --l-menu-hover-bg-color: var(--color-bg-hover, rgba(0, 0, 0, 0.04));
+  --l-menu-hover-bg-color: var(--color-bg-hover, rgba(0, 0, 0, 0.05));
+  --l-menu-hover-text-color: var(--color-primary, #3b82f6);
   --l-menu-active-text-color: var(--color-primary, #3b82f6);
-  --l-menu-selected-bg-color: var(--color-primary-bg, rgba(59, 130, 246, 0.1));
+  --l-menu-selected-bg-color: var(--color-primary-bg, rgba(59, 130, 246, 0.12));
   --l-menu-selected-text-color: var(--color-primary, #3b82f6);
+  --l-menu-selected-indicator-color: var(--color-primary, #3b82f6);
+  --l-menu-ripple-color: rgba(0, 0, 0, 0.1);
 }
 
-/* 深色主题 */
+/* ========== 深色主题 ========== */
 .l-menu--dark {
   --l-menu-bg-color: transparent;
   --l-menu-text-color: rgba(255, 255, 255, 0.9);
   --l-menu-text-color-secondary: rgba(255, 255, 255, 0.55);
   --l-menu-text-color-disabled: rgba(255, 255, 255, 0.3);
   --l-menu-border-color: rgba(255, 255, 255, 0.1);
-  --l-menu-hover-bg-color: rgba(255, 255, 255, 0.08);
+  --l-menu-hover-bg-color: rgba(255, 255, 255, 0.1);
+  --l-menu-hover-text-color: #60a5fa;
   --l-menu-active-bg-color: rgba(59, 130, 246, 0.2);
   --l-menu-active-text-color: #60a5fa;
-  --l-menu-selected-bg-color: rgba(59, 130, 246, 0.2);
+  --l-menu-selected-bg-color: rgba(59, 130, 246, 0.25);
   --l-menu-selected-text-color: #60a5fa;
+  --l-menu-selected-indicator-color: #60a5fa;
   --l-menu-group-title-color: rgba(255, 255, 255, 0.35);
+  --l-menu-popup-bg: #1f2937;
+  --l-menu-popup-border-color: rgba(255, 255, 255, 0.1);
+  --l-menu-ripple-color: rgba(255, 255, 255, 0.15);
 }
 
 /* 跟随系统暗色模式 - 支持 data-theme 和 data-mode 属性 */

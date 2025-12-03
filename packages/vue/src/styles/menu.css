@@ -197,7 +197,9 @@
   list-style: none;
   cursor: pointer;
   border-radius: var(--l-menu-border-radius);
-  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all var(--l-menu-transition-duration) var(--l-menu-transition-timing);
+  overflow: hidden;
+  /* 为涟漪效果准备 */
 }
 
 .l-menu-item:last-child {
@@ -205,6 +207,7 @@
 }
 
 .l-menu-item__content {
+  position: relative;
   display: flex;
   align-items: center;
   height: var(--l-menu-item-height);
@@ -212,45 +215,92 @@
   color: inherit;
   text-decoration: none;
   border-radius: var(--l-menu-border-radius);
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all var(--l-menu-transition-duration-fast) var(--l-menu-transition-timing-ease-out);
+  z-index: 1;
 }
 
+/* Hover 状态 - 更明显的视觉反馈 */
 .l-menu-item:hover:not(.l-menu-item--disabled) {
   background-color: var(--l-menu-hover-bg-color);
-  color: var(--l-menu-active-text-color);
+  color: var(--l-menu-hover-text-color);
 }
 
 .l-menu-item:hover:not(.l-menu-item--disabled) .l-menu-item__icon {
-  transform: scale(1.1);
+  transform: scale(1.08);
+  color: var(--l-menu-hover-text-color);
 }
 
+/* Focus 状态 - 键盘导航 */
+.l-menu-item:focus-visible {
+  outline: var(--l-menu-focus-outline-width) solid var(--l-menu-focus-outline-color);
+  outline-offset: var(--l-menu-focus-outline-offset);
+  z-index: 2;
+}
+
+/* Active 状态 */
 .l-menu-item--active:not(.l-menu-item--disabled) {
   color: var(--l-menu-active-text-color);
 }
 
+/* Selected 状态 - 更突出的选中效果 */
 .l-menu-item--selected:not(.l-menu-item--disabled) {
   color: var(--l-menu-selected-text-color);
   background-color: var(--l-menu-selected-bg-color);
   font-weight: 500;
 }
 
+/* 选中指示器 - 左侧竖条 */
 .l-menu-item--selected:not(.l-menu-item--disabled)::before {
   content: '';
   position: absolute;
   left: 0;
   top: 50%;
   transform: translateY(-50%);
-  width: 3px;
-  height: 60%;
-  background: var(--l-menu-active-text-color);
+  width: var(--l-menu-indicator-width);
+  height: var(--l-menu-indicator-height);
+  background: var(--l-menu-selected-indicator-color);
   border-radius: 0 3px 3px 0;
-  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all var(--l-menu-transition-duration) var(--l-menu-transition-timing-spring);
+  animation: slideInLeft 0.3s var(--l-menu-transition-timing-ease-out);
 }
 
+/* 选中指示器动画 */
+@keyframes slideInLeft {
+  from {
+    transform: translateY(-50%) translateX(-100%);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateY(-50%) translateX(0);
+    opacity: 1;
+  }
+}
+
+/* Disabled 状态 */
 .l-menu-item--disabled {
   color: var(--l-menu-text-color-disabled);
   cursor: not-allowed;
   opacity: 0.6;
+  pointer-events: none;
+}
+
+/* 涟漪效果容器 */
+.l-menu-item__ripple {
+  position: absolute;
+  border-radius: 50%;
+  background-color: var(--l-menu-ripple-color);
+  transform: scale(0);
+  animation: ripple var(--l-menu-ripple-duration) ease-out;
+  pointer-events: none;
+  z-index: 0;
+}
+
+@keyframes ripple {
+  to {
+    transform: scale(4);
+    opacity: 0;
+  }
 }
 
 /* ========================
@@ -266,7 +316,15 @@
   margin-right: var(--l-menu-icon-margin-right);
   font-size: var(--l-menu-icon-size);
   flex-shrink: 0;
-  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all var(--l-menu-transition-duration-fast) var(--l-menu-transition-timing-ease-out);
+  will-change: transform;
+}
+
+/* 图标文本 */
+.l-menu-item__icon-text,
+.l-submenu__icon-text {
+  display: inline-block;
+  transition: inherit;
 }
 
 /* ========================
@@ -295,6 +353,8 @@
   margin: 0 0 2px 0;
   padding: 0;
   list-style: none;
+  overflow: hidden;
+  /* 为涟漪效果准备 */
 }
 
 .l-submenu:last-child {
@@ -302,45 +362,61 @@
 }
 
 .l-submenu__title {
+  position: relative;
   display: flex;
   align-items: center;
   height: var(--l-menu-item-height);
   padding: 0 var(--l-menu-item-padding-x);
   cursor: pointer;
   border-radius: var(--l-menu-border-radius);
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all var(--l-menu-transition-duration-fast) var(--l-menu-transition-timing-ease-out);
+  z-index: 1;
 }
 
+/* Hover 状态 */
 .l-submenu:hover:not(.l-submenu--disabled)>.l-submenu__title {
   background-color: var(--l-menu-hover-bg-color);
-  color: var(--l-menu-active-text-color);
+  color: var(--l-menu-hover-text-color);
 }
 
 .l-submenu:hover:not(.l-submenu--disabled)>.l-submenu__title .l-submenu__icon {
-  transform: scale(1.1);
+  transform: scale(1.08);
+  color: var(--l-menu-hover-text-color);
 }
 
+/* Focus 状态 - 键盘导航 */
+.l-submenu:focus-visible {
+  outline: var(--l-menu-focus-outline-width) solid var(--l-menu-focus-outline-color);
+  outline-offset: var(--l-menu-focus-outline-offset);
+  z-index: 2;
+}
+
+/* Active 状态 */
 .l-submenu--active:not(.l-submenu--disabled)>.l-submenu__title {
   color: var(--l-menu-active-text-color);
 }
 
+/* Active 指示器 */
 .l-submenu--active:not(.l-submenu--disabled)>.l-submenu__title::before {
   content: '';
   position: absolute;
   left: 0;
   top: 50%;
   transform: translateY(-50%);
-  width: 3px;
-  height: 60%;
-  background: var(--l-menu-active-text-color);
+  width: var(--l-menu-indicator-width);
+  height: var(--l-menu-indicator-height);
+  background: var(--l-menu-selected-indicator-color);
   border-radius: 0 3px 3px 0;
   opacity: 0.6;
+  transition: all var(--l-menu-transition-duration) var(--l-menu-transition-timing-spring);
 }
 
+/* Disabled 状态 */
 .l-submenu--disabled>.l-submenu__title {
   color: var(--l-menu-text-color-disabled);
   cursor: not-allowed;
   opacity: 0.6;
+  pointer-events: none;
 }
 
 /* ========================
@@ -355,16 +431,24 @@
   margin-left: auto;
   padding-left: 8px;
   color: var(--l-menu-text-color-secondary);
-  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all var(--l-menu-transition-duration) var(--l-menu-transition-timing-spring);
+  will-change: transform;
 }
 
+/* 展开状态的箭头旋转 - 使用弹性动画 */
 .l-submenu--open:not(.l-submenu--popup)>.l-submenu__title .l-submenu__arrow {
   transform: rotate(180deg);
+  color: var(--l-menu-active-text-color);
+}
+
+/* Hover 时箭头颜色变化 */
+.l-submenu:hover:not(.l-submenu--disabled)>.l-submenu__title .l-submenu__arrow {
+  color: var(--l-menu-hover-text-color);
 }
 
 .l-submenu__arrow-icon {
   display: block;
-  transition: transform 0.2s;
+  transition: transform var(--l-menu-transition-duration-fast) var(--l-menu-transition-timing);
 }
 
 .l-submenu__arrow-icon--right {
@@ -379,13 +463,22 @@
   padding: 0;
   list-style: none;
   overflow: hidden;
-  transition: height 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: height var(--l-menu-expand-duration) var(--l-menu-transition-timing-ease-in-out),
+    opacity var(--l-menu-transition-duration-fast) ease-out;
+  opacity: 0;
 }
 
 /* 展开状态：确保内容可见 */
 .l-submenu--open:not(.l-submenu--popup)>.l-submenu__content {
   height: auto !important;
   overflow: visible;
+  opacity: 1;
+}
+
+/* 收起状态 */
+.l-submenu:not(.l-submenu--open):not(.l-submenu--popup)>.l-submenu__content {
+  height: 0 !important;
+  opacity: 0;
 }
 
 /* ========================
@@ -397,13 +490,17 @@
 
 .l-submenu__popup {
   position: absolute;
-  min-width: 180px;
-  padding: 6px;
-  background: var(--l-menu-popup-bg, #fff);
-  border-radius: var(--l-menu-popup-border-radius, 8px);
+  min-width: var(--l-menu-popup-min-width);
+  padding: var(--l-menu-popup-padding);
+  background: var(--l-menu-popup-bg);
+  border-radius: var(--l-menu-popup-border-radius);
   box-shadow: var(--l-menu-popup-shadow);
-  z-index: 1050;
-  border: 1px solid var(--l-menu-popup-border-color, rgba(0, 0, 0, 0.06));
+  z-index: var(--l-menu-popup-z-index);
+  border: 1px solid var(--l-menu-popup-border-color);
+  backdrop-filter: blur(8px);
+  /* 毛玻璃效果 */
+  transform-origin: top left;
+  will-change: transform, opacity;
 }
 
 /* 弹出方向：右侧（默认） */
@@ -420,24 +517,35 @@
   margin-right: 4px;
 }
 
-/* 弹出动画 */
-.l-submenu-popup-enter-active,
+/* 弹出动画 - 使用更流畅的缓动 */
+.l-submenu-popup-enter-active {
+  transition: all var(--l-menu-transition-duration) var(--l-menu-transition-timing-ease-out);
+}
+
 .l-submenu-popup-leave-active {
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all var(--l-menu-transition-duration-fast) var(--l-menu-transition-timing);
 }
 
 .l-submenu-popup-enter-from,
 .l-submenu-popup-leave-to {
   opacity: 0;
-  transform: scale(0.95);
+  transform: scale(0.92);
 }
 
-.l-submenu--placement-right .l-submenu-popup-enter-from,
+/* 右侧弹出动画 */
+.l-submenu--placement-right .l-submenu-popup-enter-from {
+  transform: translateX(-12px) scale(0.92);
+}
+
 .l-submenu--placement-right .l-submenu-popup-leave-to {
   transform: translateX(-8px) scale(0.95);
 }
 
-.l-submenu--placement-left .l-submenu-popup-enter-from,
+/* 左侧弹出动画 */
+.l-submenu--placement-left .l-submenu-popup-enter-from {
+  transform: translateX(12px) scale(0.92);
+}
+
 .l-submenu--placement-left .l-submenu-popup-leave-to {
   transform: translateX(8px) scale(0.95);
 }

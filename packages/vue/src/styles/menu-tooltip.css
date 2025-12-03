@@ -1,0 +1,142 @@
+/**
+ * 菜单 Tooltip 样式
+ */
+
+/* Tooltip 包装器 */
+.l-menu-tooltip-wrapper {
+  display: inline-block;
+  width: 100%;
+}
+
+.l-menu-tooltip-trigger {
+  display: inline-block;
+  width: 100%;
+}
+
+/* Tooltip 容器 */
+.l-menu-tooltip {
+  position: fixed;
+  z-index: var(--l-menu-tooltip-z-index);
+  max-width: 300px;
+  padding: 8px 12px;
+  font-size: 14px;
+  line-height: 1.5;
+  color: #fff;
+  background-color: rgba(0, 0, 0, 0.85);
+  border-radius: 6px;
+  box-shadow: 0 3px 6px -4px rgba(0, 0, 0, 0.12),
+    0 6px 16px 0 rgba(0, 0, 0, 0.08),
+    0 9px 28px 8px rgba(0, 0, 0, 0.05);
+  word-wrap: break-word;
+  pointer-events: none;
+  backdrop-filter: blur(8px);
+}
+
+.l-menu-tooltip__content {
+  position: relative;
+  z-index: 1;
+}
+
+/* 不同位置的箭头 */
+.l-menu-tooltip::before {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 0;
+  border: 6px solid transparent;
+}
+
+.l-menu-tooltip--right::before {
+  left: -6px;
+  top: 50%;
+  transform: translateY(-50%);
+  border-right-color: rgba(0, 0, 0, 0.85);
+}
+
+.l-menu-tooltip--left::before {
+  right: -6px;
+  top: 50%;
+  transform: translateY(-50%);
+  border-left-color: rgba(0, 0, 0, 0.85);
+}
+
+.l-menu-tooltip--top::before {
+  bottom: -6px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-top-color: rgba(0, 0, 0, 0.85);
+}
+
+.l-menu-tooltip--bottom::before {
+  top: -6px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-bottom-color: rgba(0, 0, 0, 0.85);
+}
+
+/* 淡入淡出动画 */
+.l-menu-tooltip-fade-enter-active {
+  transition: opacity 0.15s ease-out, transform 0.15s ease-out;
+}
+
+.l-menu-tooltip-fade-leave-active {
+  transition: opacity 0.1s ease-in, transform 0.1s ease-in;
+}
+
+.l-menu-tooltip-fade-enter-from,
+.l-menu-tooltip-fade-leave-to {
+  opacity: 0;
+}
+
+.l-menu-tooltip--right.l-menu-tooltip-fade-enter-from,
+.l-menu-tooltip--right.l-menu-tooltip-fade-leave-to {
+  transform: translateY(-50%) translateX(-8px);
+}
+
+.l-menu-tooltip--left.l-menu-tooltip-fade-enter-from,
+.l-menu-tooltip--left.l-menu-tooltip-fade-leave-to {
+  transform: translateY(-50%) translateX(8px);
+}
+
+.l-menu-tooltip--top.l-menu-tooltip-fade-enter-from,
+.l-menu-tooltip--top.l-menu-tooltip-fade-leave-to {
+  transform: translateX(-50%) translateY(8px);
+}
+
+.l-menu-tooltip--bottom.l-menu-tooltip-fade-enter-from,
+.l-menu-tooltip--bottom.l-menu-tooltip-fade-leave-to {
+  transform: translateX(-50%) translateY(-8px);
+}
+
+/* 深色主题适配 */
+[data-theme="dark"] .l-menu-tooltip,
+[data-mode="dark"] .l-menu-tooltip,
+.dark .l-menu-tooltip {
+  background-color: rgba(255, 255, 255, 0.9);
+  color: rgba(0, 0, 0, 0.85);
+}
+
+[data-theme="dark"] .l-menu-tooltip--right::before,
+[data-mode="dark"] .l-menu-tooltip--right::before,
+.dark .l-menu-tooltip--right::before {
+  border-right-color: rgba(255, 255, 255, 0.9);
+}
+
+[data-theme="dark"] .l-menu-tooltip--left::before,
+[data-mode="dark"] .l-menu-tooltip--left::before,
+.dark .l-menu-tooltip--left::before {
+  border-left-color: rgba(255, 255, 255, 0.9);
+}
+
+[data-theme="dark"] .l-menu-tooltip--top::before,
+[data-mode="dark"] .l-menu-tooltip--top::before,
+.dark .l-menu-tooltip--top::before {
+  border-top-color: rgba(255, 255, 255, 0.9);
+}
+
+[data-theme="dark"] .l-menu-tooltip--bottom::before,
+[data-mode="dark"] .l-menu-tooltip--bottom::before,
+.dark .l-menu-tooltip--bottom::before {
+  border-bottom-color: rgba(255, 255, 255, 0.9);
+}
+

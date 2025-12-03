@@ -146,6 +146,28 @@ const paddingLeft = computed(() => {
   return `${baseIndent * (level.value + 1)}px`
 })
 
+// 涟漪效果状态
+const ripples = ref<Array<{ id: number, x: number, y: number }>>([])
+let rippleId = 0
+
+/**
+ * 创建涟漪效果
+ */
+function createRipple(event: MouseEvent): void {
+  const target = event.currentTarget as HTMLElement
+  const rect = target.getBoundingClientRect()
+  const x = event.clientX - rect.left
+  const y = event.clientY - rect.top
+
+  const id = rippleId++
+  ripples.value.push({ id, x, y })
+
+  // 动画结束后移除
+  setTimeout(() => {
+    ripples.value = ripples.value.filter(r => r.id !== id)
+  }, 600)
+}
+
 // CSS 类名
 const classes = computed(() => ({
   'l-submenu': true,
@@ -167,12 +189,15 @@ function handleTitleClick(event: MouseEvent): void {
     event.preventDefault()
     return
   }
-  
+
+  // 创建涟漪效果
+  createRipple(event)
+
   // hover 触发模式下，点击不切换展开状态
   if (trigger.value === 'hover' && isPopupMode.value) {
     return
   }
-  
+
   menuContext.toggleOpen(props.itemKey)
 }
 
@@ -250,8 +275,15 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <li :class="classes" role="menuitem" :aria-expanded="isOpen" :aria-disabled="disabled" @mouseenter="handleMouseEnter"
-    @mouseleave="handleMouseLeave">
+  <li
+    :class="classes"
+    role="menuitem"
+    :aria-expanded="isOpen"
+    :aria-disabled="disabled"
+    :tabindex="disabled ? -1 : 0"
+    @mouseenter="handleMouseEnter"
+    @mouseleave="handleMouseLeave"
+  >
     <!-- 子菜单标题 -->
     <div class="l-submenu__title" :style="{ paddingLeft }" @click="handleTitleClick">
       <!-- 图标插槽 -->
@@ -278,6 +310,17 @@ onUnmounted(() => {
           <path fill="currentColor" d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z" />
         </svg>
       </span>
+
+      <!-- 涟漪效果 -->
+      <span
+        v-for="ripple in ripples"
+        :key="ripple.id"
+        class="l-menu-item__ripple"
+        :style="{
+          left: `${ripple.x}px`,
+          top: `${ripple.y}px`,
+        }"
+      />
     </div>
 
     <!-- 内联子菜单内容（inline 模式） -->
@@ -287,8 +330,8 @@ onUnmounted(() => {
 
     <!-- 弹出子菜单（popup/horizontal 模式） -->
     <Transition name="l-submenu-popup">
-      <div 
-        v-if="isPopupMode && (isOpen || isHovered)" 
+      <div
+        v-if="isPopupMode && (isOpen || isHovered)"
         ref="popupRef"
         class="l-submenu__popup"
         @mouseenter="handlePopupMouseEnter"

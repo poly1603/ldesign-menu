@@ -77,6 +77,28 @@ const classes = computed(() => ({
   'l-menu-item--disabled': props.disabled,
 }))
 
+// 涟漪效果状态
+const ripples = ref<Array<{ id: number, x: number, y: number }>>([])
+let rippleId = 0
+
+/**
+ * 创建涟漪效果
+ */
+function createRipple(event: MouseEvent): void {
+  const target = event.currentTarget as HTMLElement
+  const rect = target.getBoundingClientRect()
+  const x = event.clientX - rect.left
+  const y = event.clientY - rect.top
+
+  const id = rippleId++
+  ripples.value.push({ id, x, y })
+
+  // 动画结束后移除
+  setTimeout(() => {
+    ripples.value = ripples.value.filter(r => r.id !== id)
+  }, 600)
+}
+
 /**
  * 处理点击事件
  */
@@ -85,6 +107,9 @@ function handleClick(event: MouseEvent): void {
     event.preventDefault()
     return
   }
+
+  // 创建涟漪效果
+  createRipple(event)
 
   emit('click', event)
   menuContext.select(props.itemKey, event)
@@ -109,11 +134,19 @@ function handleMouseLeave(): void {
 
 <template>
   <li
-    :class="classes" role="menuitem" :aria-disabled="disabled" @click="handleClick" @mouseenter="handleMouseEnter"
+    :class="classes"
+    role="menuitem"
+    :aria-disabled="disabled"
+    :tabindex="disabled ? -1 : 0"
+    @click="handleClick"
+    @mouseenter="handleMouseEnter"
     @mouseleave="handleMouseLeave"
   >
     <component
-      :is="href ? 'a' : 'div'" class="l-menu-item__content" :href="href" :target="href ? target : undefined"
+      :is="href ? 'a' : 'div'"
+      class="l-menu-item__content"
+      :href="href"
+      :target="href ? target : undefined"
       :style="{ paddingLeft }"
     >
       <!-- 图标插槽 -->
@@ -133,5 +166,16 @@ function handleMouseLeave(): void {
         <slot name="suffix" />
       </span>
     </component>
+
+    <!-- 涟漪效果 -->
+    <span
+      v-for="ripple in ripples"
+      :key="ripple.id"
+      class="l-menu-item__ripple"
+      :style="{
+        left: `${ripple.x}px`,
+        top: `${ripple.y}px`,
+      }"
+    />
   </li>
 </template>
