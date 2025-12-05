@@ -3,7 +3,9 @@
  * 子菜单组件
  * @component LSubMenu
  */
-import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
+import type { Component } from 'vue'
+import { computed, markRaw, onMounted, onUnmounted, ref, watch } from 'vue'
+import { ChevronDown, ChevronRight } from 'lucide-vue-next'
 import { provideSubMenuContext, useMenuContext, useSubMenuContext } from '../composables'
 
 /**
@@ -21,9 +23,20 @@ export interface SubMenuProps {
   label?: string
 
   /**
-   * 图标
+   * 图标（支持字符串或 lucide-vue-next 图标组件）
+   * @example
+   * ```vue
+   * <!-- 使用字符串 -->
+   * <LSubMenu icon="📁" />
+   *
+   * <!-- 使用 lucide-vue-next 图标组件 -->
+   * <script setup>
+   * import { Folder } from 'lucide-vue-next'
+   * </script>
+   * <LSubMenu :icon="Folder" />
+   * ```
    */
-  icon?: string
+  icon?: string | Component
 
   /**
    * 是否禁用
@@ -35,6 +48,10 @@ export interface SubMenuProps {
    */
   placement?: 'left' | 'right'
 }
+
+// 使用 markRaw 包装图标组件，避免响应式开销
+const ChevronDownIcon = markRaw(ChevronDown)
+const ChevronRightIcon = markRaw(ChevronRight)
 
 const props = withDefaults(defineProps<SubMenuProps>(), {
   disabled: false,
@@ -289,7 +306,15 @@ onUnmounted(() => {
       <!-- 图标插槽 -->
       <span v-if="icon || $slots.icon" class="l-submenu__icon">
         <slot name="icon">
-          <span class="l-submenu__icon-text">{{ icon }}</span>
+          <!-- 支持 lucide-vue-next 图标组件 -->
+          <component
+            v-if="typeof icon === 'object'"
+            :is="icon"
+            :size="16"
+            class="l-submenu__icon-component"
+          />
+          <!-- 支持字符串图标 -->
+          <span v-else class="l-submenu__icon-text">{{ icon }}</span>
         </slot>
       </span>
 
@@ -298,17 +323,29 @@ onUnmounted(() => {
         <slot name="title">{{ label }}</slot>
       </span>
 
-      <!-- 展开箭头 -->
+      <!-- 展开箭头 - 使用 lucide-vue-next 图标 -->
       <span class="l-submenu__arrow">
-        <svg v-if="isHorizontal && level === 0" class="l-submenu__arrow-icon" viewBox="0 0 24 24" width="14" height="14">
-          <path fill="currentColor" d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z" />
-        </svg>
-        <svg v-else-if="isPopupMode" class="l-submenu__arrow-icon l-submenu__arrow-icon--right" viewBox="0 0 24 24" width="14" height="14">
-          <path fill="currentColor" d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z" />
-        </svg>
-        <svg v-else class="l-submenu__arrow-icon" viewBox="0 0 24 24" width="16" height="16">
-          <path fill="currentColor" d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z" />
-        </svg>
+        <!-- 水平菜单顶层：向下箭头 -->
+        <component
+          v-if="isHorizontal && level === 0"
+          :is="ChevronDownIcon"
+          :size="14"
+          class="l-submenu__arrow-icon"
+        />
+        <!-- 弹出模式：向右箭头 -->
+        <component
+          v-else-if="isPopupMode"
+          :is="ChevronRightIcon"
+          :size="14"
+          class="l-submenu__arrow-icon l-submenu__arrow-icon--right"
+        />
+        <!-- 内嵌模式：向下箭头 -->
+        <component
+          v-else
+          :is="ChevronDownIcon"
+          :size="16"
+          class="l-submenu__arrow-icon"
+        />
       </span>
 
       <!-- 涟漪效果 -->

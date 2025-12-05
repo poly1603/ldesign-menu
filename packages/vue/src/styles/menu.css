@@ -13,8 +13,8 @@
   margin: 0;
   padding: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  font-size: 14px;
-  line-height: 1.5715;
+  font-size: var(--l-menu-font-size);
+  line-height: 1.5;
   color: var(--l-menu-text-color);
   background-color: var(--l-menu-bg-color);
   transition: width var(--l-menu-transition-duration) var(--l-menu-transition-timing);
@@ -28,7 +28,7 @@
 
 .l-menu__list {
   margin: 0;
-  padding: 8px;
+  padding: var(--l-menu-padding);
   list-style: none;
 }
 
@@ -46,15 +46,15 @@
   display: flex;
   align-items: stretch;
   border-bottom: 1px solid var(--l-menu-border-color);
-  height: 56px;
+  height: var(--l-menu-item-height-large);
 }
 
 .l-menu--horizontal .l-menu__list {
   display: flex;
   align-items: stretch;
-  padding: 0 8px;
+  padding: 0 var(--size-space-xs);
   flex-wrap: nowrap;
-  gap: 4px;
+  gap: var(--size-space-xxs);
 }
 
 .l-menu--horizontal .l-menu-item {
@@ -65,7 +65,7 @@
 
 .l-menu--horizontal .l-menu-item__content {
   height: auto;
-  padding: 0 16px;
+  padding: 0 var(--size-comp-paddingLR-m);
   display: flex;
   align-items: center;
   border-radius: 0;
@@ -78,9 +78,9 @@
   bottom: 0;
   left: 50%;
   width: 0;
-  height: 2px;
+  height: var(--size-border-width-default);
   background: var(--l-menu-active-text-color);
-  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all var(--size-duration-normal) cubic-bezier(0.4, 0, 0.2, 1);
   transform: translateX(-50%);
 }
 
@@ -107,7 +107,7 @@
 
 .l-menu--horizontal .l-submenu__title {
   height: auto;
-  padding: 0 16px;
+  padding: 0 var(--size-comp-paddingLR-m);
   display: flex;
   align-items: center;
   border-radius: 0;
@@ -120,9 +120,9 @@
   bottom: 0;
   left: 50%;
   width: 0;
-  height: 2px;
+  height: var(--size-border-width-default);
   background: var(--l-menu-active-text-color);
-  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all var(--size-duration-normal) cubic-bezier(0.4, 0, 0.2, 1);
   transform: translateX(-50%);
 }
 
@@ -144,25 +144,26 @@
 .l-menu--horizontal .l-submenu--level-0>.l-submenu__popup {
   top: 100%;
   left: 0;
-  margin-top: 4px;
+  margin-top: var(--size-space-xxs);
 }
 
 .l-menu--horizontal .l-submenu--level-0>.l-submenu__popup.l-submenu__popup--enter-from,
 .l-menu--horizontal .l-submenu--level-0>.l-submenu__popup.l-submenu__popup--leave-to {
-  transform: translateY(-8px);
+  transform: translateY(calc(-1 * var(--size-space-xs)));
 }
 
 /* ========================
    折叠模式
    ======================== */
 .l-menu--collapsed {
-  width: 64px !important;
+  width: var(--size-16, 64px) !important;
 }
 
 .l-menu--collapsed .l-menu__list {
-  padding: 8px 4px;
+  padding: var(--size-spacing-xs, 4px) var(--size-spacing-2xs, 2px);
 }
 
+/* 折叠时隐藏文本和箭头 */
 .l-menu--collapsed .l-menu-item__label,
 .l-menu--collapsed .l-submenu__label,
 .l-menu--collapsed .l-submenu__arrow {
@@ -171,20 +172,48 @@
   width: 0;
   margin: 0;
   overflow: hidden;
-  transition: opacity 0.2s, visibility 0.2s, width 0.2s;
+  transition: opacity var(--l-menu-transition-duration-fast) ease-out,
+    visibility var(--l-menu-transition-duration-fast) ease-out,
+    width var(--l-menu-transition-duration-fast) ease-out;
 }
 
+/* 折叠时内容居中 */
 .l-menu--collapsed .l-menu-item__content,
 .l-menu--collapsed .l-submenu__title {
+  display: flex;
   justify-content: center;
+  align-items: center;
   padding: 0 !important;
+  min-height: var(--l-menu-item-height);
 }
 
+/* 折叠时图标样式优化 - 图标居中且放大 */
 .l-menu--collapsed .l-menu-item__icon,
 .l-menu--collapsed .l-submenu__icon {
-  margin-right: 0;
-  font-size: 18px;
-  transition: font-size 0.2s;
+  margin-right: 0 !important;
+  margin-left: 0 !important;
+  width: var(--size-5, 20px);
+  height: var(--size-5, 20px);
+  font-size: var(--size-5, 20px);
+  transition: all var(--l-menu-transition-duration-fast) ease-out;
+}
+
+/* 折叠时选中指示器调整为垂直居中的竖条 */
+.l-menu--collapsed .l-menu-item--selected:not(.l-menu-item--disabled)::before {
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 3px;
+  height: 80%;
+  border-radius: var(--size-1, 2px);
+}
+
+/* 折叠时子菜单强制使用弹出模式 */
+.l-menu--collapsed .l-submenu {
+  position: relative;
+}
+
+.l-menu--collapsed .l-submenu__content {
+  display: none !important;
 }
 
 /* ========================
@@ -192,7 +221,7 @@
    ======================== */
 .l-menu-item {
   position: relative;
-  margin: 0 0 2px 0;
+  margin: 0 0 var(--size-spacing-2xs) 0;
   padding: 0;
   list-style: none;
   cursor: pointer;
@@ -327,6 +356,16 @@
   transition: inherit;
 }
 
+/* lucide-vue-next 图标组件样式 */
+.l-menu-item__icon-component,
+.l-submenu__icon-component {
+  display: block;
+  width: 100%;
+  height: 100%;
+  stroke-width: 2;
+  transition: inherit;
+}
+
 /* ========================
    文本
    ======================== */
@@ -341,7 +380,7 @@
 
 /* 后缀 */
 .l-menu-item__suffix {
-  margin-left: 8px;
+  margin-left: var(--size-space-xs);
   flex-shrink: 0;
 }
 
@@ -350,7 +389,7 @@
    ======================== */
 .l-submenu {
   position: relative;
-  margin: 0 0 2px 0;
+  margin: 0 0 var(--size-space-xxs) 0;
   padding: 0;
   list-style: none;
   overflow: hidden;
@@ -429,10 +468,11 @@
   width: var(--l-menu-arrow-size);
   height: var(--l-menu-arrow-size);
   margin-left: auto;
-  padding-left: 8px;
+  padding-left: var(--size-space-xs);
   color: var(--l-menu-text-color-secondary);
   transition: all var(--l-menu-transition-duration) var(--l-menu-transition-timing-spring);
   will-change: transform;
+  flex-shrink: 0;
 }
 
 /* 展开状态的箭头旋转 - 使用弹性动画 */
@@ -446,8 +486,12 @@
   color: var(--l-menu-hover-text-color);
 }
 
+/* 箭头图标样式 - 支持 lucide-vue-next */
 .l-submenu__arrow-icon {
   display: block;
+  width: 100%;
+  height: 100%;
+  stroke-width: 2;
   transition: transform var(--l-menu-transition-duration-fast) var(--l-menu-transition-timing);
 }
 
@@ -484,7 +528,7 @@
 /* ========================
    弹出子菜单
    ======================== */
-.l-menu--collapsed .l-submenu {
+.l-submenu--popup {
   position: relative;
 }
 
@@ -501,20 +545,55 @@
   /* 毛玻璃效果 */
   transform-origin: top left;
   will-change: transform, opacity;
+  overflow: hidden;
+}
+
+/* 弹出菜单内的菜单列表 */
+.l-submenu__popup .l-menu__list {
+  padding: var(--size-spacing-xs, 4px);
+}
+
+/* 弹出菜单内的菜单项恢复正常样式 */
+.l-submenu__popup .l-menu-item__content,
+.l-submenu__popup .l-submenu__title {
+  justify-content: flex-start !important;
+  padding: 0 var(--l-menu-item-padding-x) !important;
+}
+
+.l-submenu__popup .l-menu-item__icon,
+.l-submenu__popup .l-submenu__icon {
+  margin-right: var(--l-menu-icon-margin-right) !important;
+  width: var(--l-menu-icon-size) !important;
+  height: var(--l-menu-icon-size) !important;
+  font-size: var(--l-menu-icon-size) !important;
+}
+
+.l-submenu__popup .l-menu-item__label,
+.l-submenu__popup .l-submenu__label {
+  opacity: 1 !important;
+  visibility: visible !important;
+  width: auto !important;
+}
+
+.l-submenu__popup .l-submenu__arrow {
+  opacity: 1 !important;
+  visibility: visible !important;
+  width: auto !important;
+  margin-left: auto !important;
 }
 
 /* 弹出方向：右侧（默认） */
 .l-submenu--placement-right>.l-submenu__popup {
   left: 100%;
   top: 0;
-  margin-left: 4px;
+  margin-left: var(--size-spacing-2xs, 2px);
 }
 
 /* 弹出方向：左侧 */
 .l-submenu--placement-left>.l-submenu__popup {
   right: 100%;
   top: 0;
-  margin-right: 4px;
+  margin-right: var(--size-spacing-2xs, 2px);
 }
 
 /* 弹出动画 - 使用更流畅的缓动 */
@@ -534,86 +613,53 @@
 
 /* 右侧弹出动画 */
 .l-submenu--placement-right .l-submenu-popup-enter-from {
-  transform: translateX(-12px) scale(0.92);
+  transform: translateX(calc(-1 * var(--size-spacing-sm, 8px))) scale(0.92);
 }
 
 .l-submenu--placement-right .l-submenu-popup-leave-to {
-  transform: translateX(-8px) scale(0.95);
+  transform: translateX(calc(-1 * var(--size-spacing-xs, 4px))) scale(0.95);
 }
 
 /* 左侧弹出动画 */
 .l-submenu--placement-left .l-submenu-popup-enter-from {
-  transform: translateX(12px) scale(0.92);
+  transform: translateX(var(--size-spacing-sm, 8px)) scale(0.92);
 }
 
 .l-submenu--placement-left .l-submenu-popup-leave-to {
-  transform: translateX(8px) scale(0.95);
-}
-
-/* 折叠模式弹出菜单样式 */
-.l-menu--collapsed .l-submenu__content {
-  display: none;
-}
-
-.l-menu--collapsed .l-submenu__popup .l-menu-item__content,
-.l-menu--collapsed .l-submenu__popup .l-submenu__title {
-  justify-content: flex-start;
-  padding: 0 var(--l-menu-item-padding-x) !important;
-}
-
-.l-menu--collapsed .l-submenu__popup .l-menu-item__label,
-.l-menu--collapsed .l-submenu__popup .l-submenu__label {
-  opacity: 1;
-  visibility: visible;
-  width: auto;
-}
-
-/* 弹出菜单列表样式 */
-.l-submenu__popup-list {
-  margin: 0;
-  padding: 4px;
-  list-style: none;
-}
-
-.l-submenu__popup-list .l-menu-item {
-  margin: 0 0 2px 0;
+  transform: translateX(var(--size-spacing-xs, 4px)) scale(0.95);
 }
 
 .l-submenu__popup-list .l-menu-item:last-child {
   margin-bottom: 0;
 }
 
-/* 暗色模式弹出菜单 - 支持 data-theme、data-mode 属性和 .l-menu--dark 类 */
+/* 暗色模式弹出菜单 - 使用统一的 data-theme-mode 属性 */
+[data-theme-mode="dark"] .l-submenu__popup {
+  background: var(--color-bg-container);
+  color: var(--color-text-primary);
+}
+
+[data-theme-mode="dark"] .l-submenu__popup .l-menu-item {
+  color: var(--color-text-primary);
+}
+
+[data-theme-mode="dark"] .l-submenu__popup .l-menu-item:hover {
+  background-color: var(--color-bg-component-hover);
+  color: var(--color-primary-default);
+}
+
+[data-theme-mode="dark"] .l-submenu__popup .l-menu-item--selected {
+  color: var(--color-primary);
+  background-color: var(--color-primary-bg);
+}
+
+/* 兼容旧的深色模式选择器 */
 [data-theme="dark"] .l-submenu__popup,
 [data-mode="dark"] .l-submenu__popup,
 .dark .l-submenu__popup,
 .l-menu--dark .l-submenu__popup {
-  background: var(--color-bg-container, #1f2937);
-  color: rgba(255, 255, 255, 0.9);
-}
-
-/* 深色模式下弹出菜单中的菜单项样式 */
-[data-theme="dark"] .l-submenu__popup .l-menu-item,
-[data-mode="dark"] .l-submenu__popup .l-menu-item,
-.dark .l-submenu__popup .l-menu-item,
-.l-menu--dark .l-submenu__popup .l-menu-item {
-  color: rgba(255, 255, 255, 0.9);
-}
-
-[data-theme="dark"] .l-submenu__popup .l-menu-item:hover,
-[data-mode="dark"] .l-submenu__popup .l-menu-item:hover,
-.dark .l-submenu__popup .l-menu-item:hover,
-.l-menu--dark .l-submenu__popup .l-menu-item:hover {
-  background-color: rgba(255, 255, 255, 0.08);
-  color: #60a5fa;
-}
-
-[data-theme="dark"] .l-submenu__popup .l-menu-item--selected,
-[data-mode="dark"] .l-submenu__popup .l-menu-item--selected,
-.dark .l-submenu__popup .l-menu-item--selected,
-.l-menu--dark .l-submenu__popup .l-menu-item--selected {
-  color: #60a5fa;
-  background-color: rgba(59, 130, 246, 0.15);
+  background: var(--color-bg-container);
+  color: var(--color-text-primary);
 }
 
 /* ========================
@@ -624,16 +670,16 @@
 }
 
 .l-submenu__popup .l-submenu__title {
-  padding: 0 12px !important;
+  padding: 0 var(--size-space-sm) !important;
   border-radius: var(--l-menu-border-radius);
 }
 
 .l-submenu__popup .l-submenu__popup {
-  top: -6px;
+  top: calc(-1 * var(--size-space-sm));
 }
 
 .l-submenu__popup .l-menu-item__content {
-  padding: 0 12px !important;
+  padding: 0 var(--size-space-sm) !important;
 }
 
 /* 弹出菜单中的选中状态 */
@@ -658,10 +704,10 @@
 .l-menu__more-trigger {
   display: flex;
   align-items: center;
-  padding: 0 16px;
+  padding: 0 var(--size-comp-paddingLR-m);
   cursor: pointer;
   color: var(--l-menu-text-color);
-  transition: color 0.2s;
+  transition: color var(--size-duration-fast);
 }
 
 .l-menu__more-trigger:hover {
@@ -671,21 +717,21 @@
 .l-menu__more-icon {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: var(--size-space-xxs);
 }
 
 .l-menu__more-popup {
   position: absolute;
   top: 100%;
   right: 0;
-  min-width: 180px;
-  margin-top: 4px;
-  padding: 6px;
-  background: var(--l-menu-popup-bg, #fff);
-  border-radius: var(--l-menu-popup-border-radius, 8px);
+  min-width: var(--size-size-24);
+  margin-top: var(--size-space-xxs);
+  padding: var(--size-space-sm);
+  background: var(--l-menu-popup-bg);
+  border-radius: var(--l-menu-popup-border-radius);
   box-shadow: var(--l-menu-popup-shadow);
   z-index: 1050;
-  border: 1px solid var(--l-menu-popup-border-color, rgba(0, 0, 0, 0.06));
+  border: var(--size-border-width-thin) solid var(--l-menu-popup-border-color);
 }
 
 /* ========================
@@ -693,12 +739,12 @@
    ======================== */
 @media (max-width: 768px) {
   .l-menu--horizontal {
-    height: 48px;
+    height: var(--size-comp-height-m);
   }
 
   .l-menu--horizontal .l-menu-item__content,
   .l-menu--horizontal .l-submenu__title {
-    padding: 0 12px;
+    padding: 0 var(--size-space-sm);
   }
 }
 

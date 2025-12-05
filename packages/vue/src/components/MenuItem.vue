@@ -3,9 +3,11 @@
  * 菜单项组件
  * @component LMenuItem
  */
-import { computed } from 'vue'
+import type { Component } from 'vue'
+import { computed, ref } from 'vue'
 
 import { useMenuContext, useSubMenuContext } from '../composables'
+import MenuTooltip from './MenuTooltip.vue'
 
 /**
  * 组件属性
@@ -22,9 +24,20 @@ export interface MenuItemProps {
   label?: string
 
   /**
-   * 图标
+   * 图标（支持字符串或 lucide-vue-next 图标组件）
+   * @example
+   * ```vue
+   * <!-- 使用字符串 -->
+   * <LMenuItem icon="📄" />
+   *
+   * <!-- 使用 lucide-vue-next 图标组件 -->
+   * <script setup>
+   * import { Home } from 'lucide-vue-next'
+   * </script>
+   * <LMenuItem :icon="Home" />
+   * ```
    */
-  icon?: string
+  icon?: string | Component
 
   /**
    * 是否禁用
@@ -133,7 +146,70 @@ function handleMouseLeave(): void {
 </script>
 
 <template>
+  <!-- 折叠模式下使用 Tooltip -->
+  <MenuTooltip
+    v-if="menuContext.collapsed.value && label"
+    :content="label"
+    placement="right"
+  >
+    <li
+      :class="classes"
+      role="menuitem"
+      :aria-disabled="disabled"
+      :tabindex="disabled ? -1 : 0"
+      @click="handleClick"
+      @mouseenter="handleMouseEnter"
+      @mouseleave="handleMouseLeave"
+    >
+      <component
+        :is="href ? 'a' : 'div'"
+        class="l-menu-item__content"
+        :href="href"
+        :target="href ? target : undefined"
+        :style="{ paddingLeft }"
+      >
+        <!-- 图标插槽 -->
+        <span v-if="icon || $slots.icon" class="l-menu-item__icon">
+          <slot name="icon">
+            <!-- 支持 lucide-vue-next 图标组件 -->
+            <component
+              v-if="typeof icon === 'object'"
+              :is="icon"
+              :size="16"
+              class="l-menu-item__icon-component"
+            />
+            <!-- 支持字符串图标 -->
+            <span v-else class="l-menu-item__icon-text">{{ icon }}</span>
+          </slot>
+        </span>
+
+        <!-- 文本内容 -->
+        <span class="l-menu-item__label">
+          <slot>{{ label }}</slot>
+        </span>
+
+        <!-- 后缀插槽 -->
+        <span v-if="$slots.suffix" class="l-menu-item__suffix">
+          <slot name="suffix" />
+        </span>
+      </component>
+
+      <!-- 涟漪效果 -->
+      <span
+        v-for="ripple in ripples"
+        :key="ripple.id"
+        class="l-menu-item__ripple"
+        :style="{
+          left: `${ripple.x}px`,
+          top: `${ripple.y}px`,
+        }"
+      />
+    </li>
+  </MenuTooltip>
+
+  <!-- 非折叠模式 -->
   <li
+    v-else
     :class="classes"
     role="menuitem"
     :aria-disabled="disabled"
@@ -152,7 +228,15 @@ function handleMouseLeave(): void {
       <!-- 图标插槽 -->
       <span v-if="icon || $slots.icon" class="l-menu-item__icon">
         <slot name="icon">
-          <span class="l-menu-item__icon-text">{{ icon }}</span>
+          <!-- 支持 lucide-vue-next 图标组件 -->
+          <component
+            v-if="typeof icon === 'object'"
+            :is="icon"
+            :size="16"
+            class="l-menu-item__icon-component"
+          />
+          <!-- 支持字符串图标 -->
+          <span v-else class="l-menu-item__icon-text">{{ icon }}</span>
         </slot>
       </span>
 

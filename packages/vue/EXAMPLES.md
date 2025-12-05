@@ -49,14 +49,18 @@ const selectedKey = ref('item1')
 
 ## 高级用法
 
-### 折叠菜单 + Tooltip
+### 折叠菜单（自动 Tooltip）
+
+菜单项在折叠模式下会自动显示 Tooltip，无需手动包裹。
 
 ```vue
 <script setup lang="ts">
 import { ref } from 'vue'
-import { LMenu, LMenuItem, LSubMenu, LMenuTooltip } from '@ldesign/menu-vue'
+import { Home, Users, Settings } from 'lucide-vue-next'
+import { LMenu, LMenuItem, LSubMenu } from '@ldesign/menu-vue'
 
 const collapsed = ref(false)
+const selectedKey = ref('home')
 
 function toggleCollapse() {
   collapsed.value = !collapsed.value
@@ -68,38 +72,107 @@ function toggleCollapse() {
     <button @click="toggleCollapse">
       {{ collapsed ? '展开' : '折叠' }}
     </button>
-    
+
     <LMenu
+      v-model:selectedKey="selectedKey"
       v-model:collapsed="collapsed"
       mode="vertical"
       :collapsed-width="64"
       :expanded-width="240"
     >
-      <LMenuTooltip 
-        v-if="collapsed"
-        content="仪表盘"
-        placement="right"
-      >
-        <LMenuItem itemKey="dashboard" icon="📊" label="仪表盘" />
-      </LMenuTooltip>
-      <LMenuItem v-else itemKey="dashboard" icon="📊" label="仪表盘" />
-      
-      <LMenuTooltip 
-        v-if="collapsed"
-        content="用户管理"
-        placement="right"
-      >
-        <LSubMenu itemKey="users" icon="👥" label="用户管理">
-          <LMenuItem itemKey="user-list" label="用户列表" />
-          <LMenuItem itemKey="user-roles" label="角色管理" />
-        </LSubMenu>
-      </LMenuTooltip>
-      <LSubMenu v-else itemKey="users" icon="👥" label="用户管理">
+      <!-- 折叠时自动显示 Tooltip -->
+      <LMenuItem itemKey="home" label="首页" :icon="Home" />
+      <LMenuItem itemKey="dashboard" label="仪表盘" :icon="BarChart" />
+
+      <!-- 折叠时子菜单自动弹出显示 -->
+      <LSubMenu itemKey="users" label="用户管理" :icon="Users">
         <LMenuItem itemKey="user-list" label="用户列表" />
         <LMenuItem itemKey="user-roles" label="角色管理" />
       </LSubMenu>
+
+      <LSubMenu itemKey="settings" label="系统设置" :icon="Settings">
+        <LMenuItem itemKey="general" label="常规设置" />
+        <LMenuItem itemKey="security" label="安全设置" />
+      </LSubMenu>
     </LMenu>
   </div>
+</template>
+```
+
+### 默认展开子菜单
+
+使用 `defaultOpenKeys` 属性配置默认展开的子菜单。
+
+```vue
+<script setup lang="ts">
+import { ref } from 'vue'
+import { LMenu, LMenuItem, LSubMenu } from '@ldesign/menu-vue'
+
+const selectedKey = ref('user-list')
+// 默认展开 users 和 settings 子菜单
+const defaultOpenKeys = ['users', 'settings']
+</script>
+
+<template>
+  <LMenu
+    v-model:selectedKey="selectedKey"
+    :default-open-keys="defaultOpenKeys"
+    mode="vertical"
+  >
+    <LMenuItem itemKey="home" label="首页" icon="🏠" />
+
+    <!-- 页面加载时自动展开 -->
+    <LSubMenu itemKey="users" label="用户管理" icon="👥">
+      <LMenuItem itemKey="user-list" label="用户列表" />
+      <LMenuItem itemKey="user-roles" label="角色管理" />
+    </LSubMenu>
+
+    <!-- 页面加载时自动展开 -->
+    <LSubMenu itemKey="settings" label="系统设置" icon="⚙️">
+      <LMenuItem itemKey="general" label="常规设置" />
+      <LMenuItem itemKey="security" label="安全设置" />
+    </LSubMenu>
+  </LMenu>
+</template>
+```
+
+### 多级子菜单（级联弹出）
+
+折叠模式下，多级子菜单会向右侧级联弹出。
+
+```vue
+<script setup lang="ts">
+import { ref } from 'vue'
+import { Users, Settings, Shield } from 'lucide-vue-next'
+import { LMenu, LMenuItem, LSubMenu } from '@ldesign/menu-vue'
+
+const collapsed = ref(true)
+const selectedKey = ref('profile')
+</script>
+
+<template>
+  <LMenu
+    v-model:selectedKey="selectedKey"
+    v-model:collapsed="collapsed"
+    mode="vertical"
+    :collapsed-width="64"
+  >
+    <LSubMenu itemKey="users" label="用户管理" :icon="Users">
+      <LMenuItem itemKey="user-list" label="用户列表" />
+
+      <!-- 二级子菜单 - 向右弹出 -->
+      <LSubMenu itemKey="user-settings" label="用户设置" :icon="Settings">
+        <LMenuItem itemKey="profile" label="个人资料" />
+        <LMenuItem itemKey="security" label="安全设置" :icon="Shield" />
+
+        <!-- 三级子菜单 - 继续向右弹出 -->
+        <LSubMenu itemKey="advanced" label="高级设置">
+          <LMenuItem itemKey="api-keys" label="API 密钥" />
+          <LMenuItem itemKey="webhooks" label="Webhooks" />
+        </LSubMenu>
+      </LSubMenu>
+    </LSubMenu>
+  </LMenu>
 </template>
 ```
 
@@ -219,14 +292,52 @@ const { focusedKey } = useMenuKeyboard({
 </template>
 ```
 
-### 自定义图标
+### 使用 Lucide 图标
 
 ```vue
+<script setup lang="ts">
+import { ref } from 'vue'
+import { LMenu, LMenuItem, LSubMenu } from '@ldesign/menu-vue'
+import { Home, Settings, Users, FileText, Folder, ChevronRight } from 'lucide-vue-next'
+import '@ldesign/menu-vue/styles'
+
+const selectedKey = ref('home')
+</script>
+
+<template>
+  <LMenu v-model:selectedKey="selectedKey" mode="vertical">
+    <!-- 使用 lucide-vue-next 图标组件 -->
+    <LMenuItem itemKey="home" label="首页" :icon="Home" />
+    <LMenuItem itemKey="settings" label="设置" :icon="Settings" />
+
+    <LSubMenu itemKey="users" label="用户管理" :icon="Users">
+      <LMenuItem itemKey="user-list" label="用户列表" :icon="FileText" />
+      <LMenuItem itemKey="user-roles" label="角色管理" :icon="Folder" />
+    </LSubMenu>
+  </LMenu>
+</template>
+```
+
+### 自定义图标插槽
+
+```vue
+<script setup lang="ts">
+import { Shield } from 'lucide-vue-next'
+</script>
+
 <template>
   <LMenu mode="vertical">
+    <!-- 使用插槽自定义图标 -->
     <LMenuItem itemKey="item1" label="自定义图标">
       <template #icon>
-        <svg viewBox="0 0 24 24" width="20" height="20">
+        <Shield :size="16" color="currentColor" />
+      </template>
+    </LMenuItem>
+
+    <!-- 使用 SVG -->
+    <LMenuItem itemKey="item2" label="SVG 图标">
+      <template #icon>
+        <svg viewBox="0 0 24 24" width="16" height="16">
           <path fill="currentColor" d="M12 2L2 7v10c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-10-5z" />
         </svg>
       </template>
