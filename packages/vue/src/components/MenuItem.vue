@@ -25,17 +25,6 @@ export interface MenuItemProps {
 
   /**
    * 图标（支持字符串或 lucide-vue-next 图标组件）
-   * @example
-   * ```vue
-   * <!-- 使用字符串 -->
-   * <LMenuItem icon="📄" />
-   *
-   * <!-- 使用 lucide-vue-next 图标组件 -->
-   * <script setup>
-   * import { Home } from 'lucide-vue-next'
-   * </script>
-   * <LMenuItem :icon="Home" />
-   * ```
    */
   icon?: string | Component
 
@@ -43,6 +32,11 @@ export interface MenuItemProps {
    * 是否禁用
    */
   disabled?: boolean
+
+  /**
+   * 是否危险状态（红色警告）
+   */
+  danger?: boolean
 
   /**
    * 链接地址
@@ -53,10 +47,16 @@ export interface MenuItemProps {
    * 链接打开方式
    */
   target?: '_self' | '_blank' | '_parent' | '_top'
+
+  /**
+   * 自定义样式
+   */
+  itemStyle?: Record<string, string>
 }
 
 const props = withDefaults(defineProps<MenuItemProps>(), {
   disabled: false,
+  danger: false,
   target: '_self',
 })
 
@@ -88,6 +88,7 @@ const classes = computed(() => ({
   'l-menu-item--selected': isSelected.value,
   'l-menu-item--active': isActive.value,
   'l-menu-item--disabled': props.disabled,
+  'l-menu-item--danger': props.danger,
 }))
 
 // 涟漪效果状态

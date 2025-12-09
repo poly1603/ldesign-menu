@@ -1,5 +1,6 @@
 /**
  * 菜单分组样式
+ * 参考 Ant Design 设计规范
  */
 
 /* 菜单分组 */
@@ -9,15 +10,27 @@
   list-style: none;
 }
 
+.l-menu-group+.l-menu-group {
+  margin-top: 8px;
+}
+
 .l-menu-group__title {
   display: flex;
   align-items: center;
   height: var(--l-menu-group-title-height);
-  padding-right: var(--l-menu-item-padding-x);
-  font-size: 12px;
+  padding: 8px var(--l-menu-group-title-padding-x, 16px) 4px;
+  font-size: var(--l-menu-group-title-font-size, 12px);
   color: var(--l-menu-group-title-color);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
+  font-weight: 500;
+  line-height: 1.5;
+  cursor: default;
+  user-select: none;
+  transition: color var(--l-menu-transition-duration) var(--l-menu-transition-timing);
+}
+
+/* 深色主题分组标题 */
+.l-menu--dark .l-menu-group__title {
+  color: rgba(255, 255, 255, 0.45);
 }
 
 .l-menu-group__content {
@@ -26,11 +39,43 @@
   list-style: none;
 }
 
-/* 分隔线 */
+/* 分隔线 - Ant Design 风格 */
 .l-menu-divider {
   height: 1px;
-  margin: var(--l-menu-divider-margin) 0;
+  margin: var(--l-menu-divider-margin) var(--l-menu-divider-margin-x, 12px);
   background-color: var(--l-menu-border-color);
   list-style: none;
+  opacity: 0.6;
 }
 
+/* 折叠模式下隐藏分组标题 */
+.l-menu--collapsed .l-menu-group__title {
+  opacity: 0;
+  visibility: hidden;
+  height: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+/* 折叠模式下分隔线调整 */
+.l-menu--collapsed .l-menu-divider {
+  margin: var(--l-menu-divider-margin) 8px;
+}
+
+/* 分组标题图标（如果有） */
+.l-menu-group__title-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 14px;
+  height: 14px;
+  margin-right: 6px;
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+/* 虚线分隔线变体 */
+.l-menu-divider--dashed {
+  background: transparent;
+  border-top: 1px dashed var(--l-menu-border-color);
+}

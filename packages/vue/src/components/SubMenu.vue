@@ -24,17 +24,6 @@ export interface SubMenuProps {
 
   /**
    * 图标（支持字符串或 lucide-vue-next 图标组件）
-   * @example
-   * ```vue
-   * <!-- 使用字符串 -->
-   * <LSubMenu icon="📁" />
-   *
-   * <!-- 使用 lucide-vue-next 图标组件 -->
-   * <script setup>
-   * import { Folder } from 'lucide-vue-next'
-   * </script>
-   * <LSubMenu :icon="Folder" />
-   * ```
    */
   icon?: string | Component
 
@@ -130,27 +119,37 @@ watch(isOpen, (open, oldOpen) => {
     isAnimating.value = true
     
     if (open) {
-      // 展开动画：0 -> 实际高度 -> auto
+      // 展开动画：0 -> 实际高度 -> auto（使用更平滑的时序）
       animatingHeight.value = '0px'
+      // 使用双重 RAF 确保浏览器已完成布局计算
       requestAnimationFrame(() => {
-        if (contentRef.value) {
-          animatingHeight.value = `${contentRef.value.scrollHeight}px`
-          setTimeout(() => {
-            isAnimating.value = false
-            animatingHeight.value = null
-          }, 250)
-        }
+        requestAnimationFrame(() => {
+          if (contentRef.value) {
+            animatingHeight.value = `${contentRef.value.scrollHeight}px`
+            // 动画完成后切换到 auto
+            const timer = setTimeout(() => {
+              isAnimating.value = false
+              animatingHeight.value = null
+            }, 250)
+            // 清理函数
+            return () => clearTimeout(timer)
+          }
+        })
       })
     }
     else {
       // 收起动画：实际高度 -> 0
-      animatingHeight.value = `${contentRef.value.scrollHeight}px`
+      const currentHeight = contentRef.value.scrollHeight
+      animatingHeight.value = `${currentHeight}px`
+      // 强制重绘
+      contentRef.value.offsetHeight
       requestAnimationFrame(() => {
         animatingHeight.value = '0px'
-        setTimeout(() => {
+        const timer = setTimeout(() => {
           isAnimating.value = false
           animatingHeight.value = null
-        }, 250)
+        }, 200)
+        return () => clearTimeout(timer)
       })
     }
   }
