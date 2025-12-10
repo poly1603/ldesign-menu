@@ -1,5 +1,6 @@
 /**
  * 菜单配置类型定义
+ * 参考 Ant Design Menu 组件设计
  * @module types/menu-config
  */
 
@@ -9,8 +10,9 @@ import type { MenuItem } from './menu-item'
  * 菜单展示模式
  * - `vertical`: 垂直模式（侧边栏）
  * - `horizontal`: 水平模式（顶部导航）
+ * - `inline`: 内嵌模式（子菜单内嵌展开，等同于 vertical + expandMode: inline）
  */
-export type MenuMode = 'vertical' | 'horizontal'
+export type MenuMode = 'vertical' | 'horizontal' | 'inline'
 
 /**
  * 子菜单展开方式（仅垂直模式有效）
@@ -42,7 +44,25 @@ export type MenuTheme = 'light' | 'dark'
 export type SubMenuPlacement = 'left' | 'right'
 
 /**
+ * 菜单尺寸
+ * - `small`: 小尺寸
+ * - `middle`: 中等尺寸（默认）
+ * - `large`: 大尺寸
+ */
+export type MenuSize = 'small' | 'middle' | 'large'
+
+/**
+ * 选中指示器位置
+ * - `left`: 左侧指示条
+ * - `right`: 右侧指示条
+ * - `bottom`: 底部指示线（水平模式）
+ * - `none`: 无指示器
+ */
+export type IndicatorPosition = 'left' | 'right' | 'bottom' | 'none'
+
+/**
  * 菜单配置选项
+ * 参考 Ant Design Menu API 设计
  */
 export interface MenuConfig {
   /**
@@ -52,6 +72,9 @@ export interface MenuConfig {
 
   /**
    * 展示模式
+   * - `vertical`: 垂直菜单
+   * - `horizontal`: 水平菜单
+   * - `inline`: 内嵌菜单（等同于 vertical + expandMode: inline）
    * @default 'vertical'
    */
   mode?: MenuMode
@@ -75,6 +98,12 @@ export interface MenuConfig {
   theme?: MenuTheme
 
   /**
+   * 菜单尺寸
+   * @default 'middle'
+   */
+  size?: MenuSize
+
+  /**
    * 是否折叠（仅垂直模式有效）
    * 折叠时只显示图标，悬停时弹出子菜单
    * @default false
@@ -95,7 +124,7 @@ export interface MenuConfig {
 
   /**
    * 子级缩进（px）
-   * @default 16
+   * @default 24
    */
   indent?: number
 
@@ -158,20 +187,75 @@ export interface MenuConfig {
    * 横向菜单更多按钮图标
    */
   moreIcon?: string
+
+  /**
+   * 选中指示器位置
+   * @default 'left'（垂直模式） / 'bottom'（水平模式）
+   */
+  indicatorPosition?: IndicatorPosition
+
+  /**
+   * 是否可选中
+   * @default true
+   */
+  selectable?: boolean
+
+  /**
+   * 是否允许多选
+   * @default false
+   */
+  multiple?: boolean
+
+  /**
+   * 弹出菜单的 z-index
+   * @default 1050
+   */
+  popupZIndex?: number
+
+  /**
+   * 弹出菜单的容器，默认为 body
+   */
+  getPopupContainer?: () => HTMLElement
+
+  /**
+   * 子菜单打开延迟（ms，仅 hover 触发时有效）
+   * @default 0
+   */
+  subMenuOpenDelay?: number
+
+  /**
+   * 子菜单关闭延迟（ms，仅 hover 触发时有效）
+   * @default 100
+   */
+  subMenuCloseDelay?: number
+
+  /**
+   * 是否显示边框
+   * @default false
+   */
+  bordered?: boolean
+
+  /**
+   * 圆角大小
+   * @default 8
+   */
+  borderRadius?: number
 }
 
 /**
  * 菜单配置默认值
+ * 参考 Ant Design 默认配置
  */
-export const DEFAULT_MENU_CONFIG: Required<Omit<MenuConfig, 'items'>> = {
+export const DEFAULT_MENU_CONFIG: Required<Omit<MenuConfig, 'items' | 'getPopupContainer'>> & { getPopupContainer?: () => HTMLElement } = {
   mode: 'vertical',
   expandMode: 'inline',
   trigger: 'click',
   theme: 'light',
+  size: 'middle',
   collapsed: false,
   collapsedWidth: 48,
   expandedWidth: 240,
-  indent: 16,
+  indent: 24,
   accordion: false,
   topLevelExclusive: true,
   requireTopIcon: true,
@@ -182,5 +266,14 @@ export const DEFAULT_MENU_CONFIG: Required<Omit<MenuConfig, 'items'>> = {
   subMenuPlacement: 'right',
   overflowFold: true,
   moreIcon: '',
+  indicatorPosition: 'left',
+  selectable: true,
+  multiple: false,
+  popupZIndex: 1050,
+  getPopupContainer: undefined,
+  subMenuOpenDelay: 0,
+  subMenuCloseDelay: 100,
+  bordered: false,
+  borderRadius: 8,
 }
 

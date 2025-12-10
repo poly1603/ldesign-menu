@@ -1,8 +1,10 @@
 /**
  * 菜单组件样式入口
+ * 参考 Ant Design Menu 组件设计
  */
 
 @import './variables.css';
+@import './animations.css';
 @import './menu.css';
 @import './menu-group.css';
 @import './menu-tooltip.css';

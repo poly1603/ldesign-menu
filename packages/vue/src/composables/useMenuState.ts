@@ -54,6 +54,11 @@ export interface UseMenuStateOptions {
   collapsed?: boolean | Ref<boolean>
 
   /**
+   * 手风琴模式（受控）
+   */
+  accordion?: boolean | Ref<boolean>
+
+  /**
    * 权限过滤配置
    */
   filterConfig?: MenuFilterConfig | Ref<MenuFilterConfig>
@@ -162,6 +167,7 @@ export function useMenuState(options: UseMenuStateOptions): UseMenuStateReturn {
     defaultSelectedKey,
     defaultOpenKeys,
     collapsed: collapsedOption,
+    accordion: accordionOption,
     filterConfig: filterConfigOption,
   } = options
 
@@ -252,6 +258,22 @@ export function useMenuState(options: UseMenuStateOptions): UseMenuStateReturn {
     watch(collapsedRef, (newValue) => {
       collapsed.value = newValue
       manager.setCollapsed(newValue)
+    })
+  }
+
+  // 监听受控的 accordion
+  if (accordionOption !== undefined) {
+    const accordionRef = computed(() =>
+      typeof accordionOption === 'boolean' ? accordionOption : accordionOption.value,
+    )
+
+    // 立即同步初始值
+    if (accordionRef.value !== undefined) {
+      manager.updateConfig({ accordion: accordionRef.value })
+    }
+
+    watch(accordionRef, (newValue) => {
+      manager.updateConfig({ accordion: newValue })
     })
   }
 

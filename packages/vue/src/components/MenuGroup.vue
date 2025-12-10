@@ -22,16 +22,17 @@ defineProps<MenuGroupProps>()
 const menuContext = useMenuContext()
 const parentContext = useSubMenuContext()
 
-// 当前层级
+// 当前层级 - 分组本身的层级
 const level = computed(() => parentContext.level)
 
 // 提供子菜单上下文给子组件
+// 分组不增加层级，子项保持与分组同级
 provideSubMenuContext({
-  level: level.value + 1,
+  level: level.value,
 })
 
-// 计算缩进
-const paddingLeft = computed(() => {
+// 计算标题缩进
+const titlePaddingLeft = computed(() => {
   const baseIndent = menuContext.indent.value
   return `${baseIndent * (level.value + 1)}px`
 })
@@ -45,7 +46,7 @@ const classes = computed(() => ({
 <template>
   <li :class="classes" role="group">
     <!-- 分组标题 -->
-    <div v-if="title || $slots.title" class="l-menu-group__title" :style="{ paddingLeft }">
+    <div v-if="title || $slots.title" class="l-menu-group__title" :style="{ paddingLeft: titlePaddingLeft }">
       <slot name="title">
         {{ title }}
       </slot>

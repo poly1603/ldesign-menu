@@ -356,6 +356,14 @@ export class MenuManager {
   }
 
   /**
+   * 更新配置
+   * @param config - 新的配置项
+   */
+  updateConfig(config: Partial<MenuConfig>): void {
+    Object.assign(this.config, config)
+  }
+
+  /**
    * 销毁管理器
    */
   destroy(): void {

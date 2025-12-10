@@ -6,8 +6,10 @@
 // 菜单配置类型
 export type {
   ExpandMode,
+  IndicatorPosition,
   MenuConfig,
   MenuMode,
+  MenuSize,
   MenuTheme,
   SubMenuPlacement,
   TriggerMode,

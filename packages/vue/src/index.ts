@@ -14,6 +14,7 @@ export * from './composables'
 export type {
   ExpandMode,
   FlatMenuItem,
+  IndicatorPosition,
   MenuConfig,
   MenuDividerItem,
   MenuEventHandler,
@@ -32,6 +33,7 @@ export type {
   MenuOpenChangeEventParams,
   MenuOverflowEventParams,
   MenuSelectEventParams,
+  MenuSize,
   MenuState,
   MenuSubItem,
   MenuTheme,

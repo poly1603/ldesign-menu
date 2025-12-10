@@ -1,23 +1,27 @@
 <script setup lang="ts">
 import type {
   ExpandMode,
+  IndicatorPosition,
   MenuFilterConfig,
   MenuItem,
   MenuMode,
   MenuSelectEventParams,
+  MenuSize,
   MenuTheme,
   SubMenuPlacement,
   TriggerMode,
 } from '../types'
 /**
  * 菜单组件
+ * 参考 Ant Design Menu 组件设计
  * @component LMenu
  */
-import { computed, toRef } from 'vue'
+import { computed, toRef, ref, onMounted, onUnmounted } from 'vue'
 import { provideMenuContext, provideSubMenuContext, useMenuState } from '../composables'
 
 /**
  * 组件属性
+ * 参考 Ant Design Menu API 设计
  */
 export interface MenuProps {
   /**
@@ -44,6 +48,12 @@ export interface MenuProps {
   theme?: MenuTheme
 
   /**
+   * 菜单尺寸
+   * @default 'middle'
+   */
+  size?: MenuSize
+
+  /**
    * 是否折叠
    * @default false
    */
@@ -51,19 +61,19 @@ export interface MenuProps {
 
   /**
    * 折叠宽度
-   * @default 48
+   * @default 80
    */
   collapsedWidth?: number
 
   /**
    * 展开宽度
-   * @default 240
+   * @default 256
    */
   expandedWidth?: number
 
   /**
    * 子级缩进
-   * @default 16
+   * @default 24
    */
   indent?: number
 
@@ -90,6 +100,18 @@ export interface MenuProps {
    * @default 'right'
    */
   subMenuPlacement?: SubMenuPlacement
+
+  /**
+   * 选中指示器位置
+   * @default 'left'
+   */
+  indicatorPosition?: IndicatorPosition
+
+  /**
+   * 是否显示边框
+   * @default false
+   */
+  bordered?: boolean
 
   /**
    * 选中的菜单项 key（受控）
@@ -122,14 +144,17 @@ const props = withDefaults(defineProps<MenuProps>(), {
   mode: 'vertical',
   expandMode: 'inline',
   theme: 'light',
+  size: 'middle',
   collapsed: false,
-  collapsedWidth: 48,
-  expandedWidth: 240,
-  indent: 16,
+  collapsedWidth: 80,
+  expandedWidth: 256,
+  indent: 24,
   accordion: false,
   trigger: 'click',
   autoExpandParent: true,
   subMenuPlacement: 'right',
+  indicatorPosition: 'left',
+  bordered: false,
 })
 
 const emit = defineEmits<{
@@ -184,6 +209,7 @@ const {
   defaultSelectedKey: props.defaultSelectedKey,
   defaultOpenKeys: props.defaultOpenKeys,
   collapsed: toRef(props, 'collapsed'),
+  accordion: toRef(props, 'accordion'),
   filterConfig: toRef(props, 'filterConfig'),
 })
 
@@ -216,6 +242,7 @@ provideMenuContext({
   isOpen: (key: string) => openKeys.value.includes(key),
   isSelected: (key: string) => selectedKey.value === key,
   isActive: (key: string) => state.value.activePath.includes(key),
+  closeAllPopups,
 })
 
 // 提供子菜单上下文（根级别）
@@ -231,12 +258,40 @@ const menuWidth = computed(() => {
   return collapsed.value ? `${props.collapsedWidth}px` : `${props.expandedWidth}px`
 })
 
+// 菜单引用
+const menuRef = ref<HTMLElement | null>(null)
+
+// 关闭所有 popup
+function closeAllPopups(): void {
+  if (props.expandMode === 'popup' || props.collapsed) {
+    openKeys.value.forEach(key => close(key))
+  }
+}
+
+// 点击外部关闭 popup
+function handleClickOutside(event: MouseEvent): void {
+  if (menuRef.value && !menuRef.value.contains(event.target as Node)) {
+    closeAllPopups()
+  }
+}
+
+onMounted(() => {
+  document.addEventListener('click', handleClickOutside)
+})
+
+onUnmounted(() => {
+  document.removeEventListener('click', handleClickOutside)
+})
+
 // CSS 类名
 const classes = computed(() => ({
   'l-menu': true,
   [`l-menu--${props.mode}`]: true,
   [`l-menu--${props.theme}`]: true,
+  [`l-menu--${props.size}`]: props.size !== 'middle',
   'l-menu--collapsed': collapsed.value,
+  'l-menu--bordered': props.bordered,
+  [`l-menu--indicator-${props.indicatorPosition}`]: true,
 }))
 
 // 暴露方法
@@ -269,7 +324,7 @@ defineExpose({
 </script>
 
 <template>
-  <nav :class="classes" :style="{ width: menuWidth }" role="navigation">
+  <nav ref="menuRef" :class="classes" :style="{ width: menuWidth }" role="navigation">
     <ul class="l-menu__list" role="menu">
       <slot />
     </ul>

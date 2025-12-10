@@ -1,0 +1,378 @@
+/**
+ * 菜单动画样式
+ * 参考 Ant Design 动画效果实现
+ */
+
+/* ========================
+   动画时间和缓动函数
+   ======================== */
+:root {
+  /* 标准动画时间 */
+  --l-menu-motion-duration-fast: 0.1s;
+  --l-menu-motion-duration-mid: 0.2s;
+  --l-menu-motion-duration-slow: 0.3s;
+
+  /* 缓动函数 */
+  --l-menu-motion-ease-in-out: cubic-bezier(0.645, 0.045, 0.355, 1);
+  --l-menu-motion-ease-out: cubic-bezier(0.215, 0.61, 0.355, 1);
+  --l-menu-motion-ease-in: cubic-bezier(0.55, 0.055, 0.675, 0.19);
+  --l-menu-motion-ease-out-back: cubic-bezier(0.12, 0.4, 0.29, 1.46);
+  --l-menu-motion-ease-in-back: cubic-bezier(0.71, -0.46, 0.88, 0.6);
+  --l-menu-motion-ease-out-circ: cubic-bezier(0.08, 0.82, 0.17, 1);
+  --l-menu-motion-ease-in-circ: cubic-bezier(0.6, 0.04, 0.98, 0.34);
+  --l-menu-motion-ease-out-quint: cubic-bezier(0.23, 1, 0.32, 1);
+  --l-menu-motion-ease-in-quint: cubic-bezier(0.755, 0.05, 0.855, 0.06);
+}
+
+/* ========================
+   选中指示器动画
+   ======================== */
+
+/* 左侧指示器滑入 */
+@keyframes l-menu-indicator-slide-in-left {
+  from {
+    transform: translateY(-50%) scaleY(0);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateY(-50%) scaleY(1);
+    opacity: 1;
+  }
+}
+
+/* 左侧指示器滑出 */
+@keyframes l-menu-indicator-slide-out-left {
+  from {
+    transform: translateY(-50%) scaleY(1);
+    opacity: 1;
+  }
+
+  to {
+    transform: translateY(-50%) scaleY(0);
+    opacity: 0;
+  }
+}
+
+/* 底部指示器展开（水平模式） */
+@keyframes l-menu-indicator-expand-bottom {
+  from {
+    transform: translateX(-50%) scaleX(0);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateX(-50%) scaleX(1);
+    opacity: 1;
+  }
+}
+
+/* 底部指示器收缩（水平模式） */
+@keyframes l-menu-indicator-collapse-bottom {
+  from {
+    transform: translateX(-50%) scaleX(1);
+    opacity: 1;
+  }
+
+  to {
+    transform: translateX(-50%) scaleX(0);
+    opacity: 0;
+  }
+}
+
+/* ========================
+   子菜单展开/收起动画（内嵌模式）
+   ======================== */
+
+/* 子菜单内容展开 */
+@keyframes l-menu-submenu-expand {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 子菜单内容收起 */
+@keyframes l-menu-submenu-collapse {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  to {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+}
+
+/* ========================
+   弹出菜单动画
+   ======================== */
+
+/* 从右侧弹出 */
+@keyframes l-menu-popup-slide-right {
+  from {
+    opacity: 0;
+    transform: translateX(-4px) scale(0.98);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+/* 从左侧弹出 */
+@keyframes l-menu-popup-slide-left {
+  from {
+    opacity: 0;
+    transform: translateX(4px) scale(0.98);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+/* 从顶部弹出（水平模式下拉） */
+@keyframes l-menu-popup-slide-down {
+  from {
+    opacity: 0;
+    transform: translateY(-4px) scale(0.98);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* 从底部弹出（向上展开） */
+@keyframes l-menu-popup-slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(4px) scale(0.98);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* 弹出菜单淡出 */
+@keyframes l-menu-popup-fade-out {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  to {
+    opacity: 0;
+    transform: scale(0.98);
+  }
+}
+
+/* ========================
+   箭头旋转动画
+   ======================== */
+
+/* 箭头向下展开 */
+@keyframes l-menu-arrow-rotate-down {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(180deg);
+  }
+}
+
+/* 箭头向上收起 */
+@keyframes l-menu-arrow-rotate-up {
+  from {
+    transform: rotate(180deg);
+  }
+
+  to {
+    transform: rotate(0deg);
+  }
+}
+
+/* ========================
+   涟漪效果
+   ======================== */
+@keyframes l-menu-ripple {
+  0% {
+    transform: scale(0);
+    opacity: 0.5;
+  }
+
+  100% {
+    transform: scale(4);
+    opacity: 0;
+  }
+}
+
+/* ========================
+   高亮效果
+   ======================== */
+@keyframes l-menu-highlight-flash {
+  0% {
+    background-color: var(--l-menu-selected-bg-color);
+  }
+
+  50% {
+    background-color: var(--l-menu-hover-bg-color);
+  }
+
+  100% {
+    background-color: var(--l-menu-selected-bg-color);
+  }
+}
+
+/* ========================
+   折叠/展开动画
+   ======================== */
+@keyframes l-menu-collapse {
+  from {
+    width: var(--l-menu-expanded-width, 240px);
+  }
+
+  to {
+    width: var(--l-menu-collapsed-width, 48px);
+  }
+}
+
+@keyframes l-menu-expand {
+  from {
+    width: var(--l-menu-collapsed-width, 48px);
+  }
+
+  to {
+    width: var(--l-menu-expanded-width, 240px);
+  }
+}
+
+/* ========================
+   文字淡入淡出
+   ======================== */
+@keyframes l-menu-text-fade-in {
+  from {
+    opacity: 0;
+    transform: translateX(-8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes l-menu-text-fade-out {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  to {
+    opacity: 0;
+    transform: translateX(-8px);
+  }
+}
+
+/* ========================
+   工具提示动画
+   ======================== */
+@keyframes l-menu-tooltip-slide-in {
+  from {
+    opacity: 0;
+    transform: translateX(-4px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes l-menu-tooltip-slide-out {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  to {
+    opacity: 0;
+    transform: translateX(-4px);
+  }
+}
+
+/* ========================
+   Vue Transition Classes
+   ======================== */
+
+/* 弹出菜单 - 从右侧 */
+.l-submenu-popup-right-enter-active {
+  animation: l-menu-popup-slide-right var(--l-menu-motion-duration-mid) var(--l-menu-motion-ease-out);
+}
+
+.l-submenu-popup-right-leave-active {
+  animation: l-menu-popup-fade-out var(--l-menu-motion-duration-fast) var(--l-menu-motion-ease-in);
+}
+
+/* 弹出菜单 - 从左侧 */
+.l-submenu-popup-left-enter-active {
+  animation: l-menu-popup-slide-left var(--l-menu-motion-duration-mid) var(--l-menu-motion-ease-out);
+}
+
+.l-submenu-popup-left-leave-active {
+  animation: l-menu-popup-fade-out var(--l-menu-motion-duration-fast) var(--l-menu-motion-ease-in);
+}
+
+/* 弹出菜单 - 从顶部（下拉） */
+.l-submenu-popup-down-enter-active {
+  animation: l-menu-popup-slide-down var(--l-menu-motion-duration-mid) var(--l-menu-motion-ease-out);
+}
+
+.l-submenu-popup-down-leave-active {
+  animation: l-menu-popup-fade-out var(--l-menu-motion-duration-fast) var(--l-menu-motion-ease-in);
+}
+
+/* 子菜单内容展开/收起 */
+.l-submenu-content-enter-active {
+  animation: l-menu-submenu-expand var(--l-menu-motion-duration-mid) var(--l-menu-motion-ease-out);
+}
+
+.l-submenu-content-leave-active {
+  animation: l-menu-submenu-collapse var(--l-menu-motion-duration-fast) var(--l-menu-motion-ease-in);
+}
+
+/* 工具提示 */
+.l-menu-tooltip-enter-active {
+  animation: l-menu-tooltip-slide-in var(--l-menu-motion-duration-fast) var(--l-menu-motion-ease-out);
+}
+
+.l-menu-tooltip-leave-active {
+  animation: l-menu-tooltip-slide-out var(--l-menu-motion-duration-fast) var(--l-menu-motion-ease-in);
+}
+
+/* ========================
+   减少动画（无障碍）
+   ======================== */
+@media (prefers-reduced-motion: reduce) {
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

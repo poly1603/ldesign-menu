@@ -90,6 +90,11 @@ export interface MenuContext {
    * 获取菜单项是否在激活路径上
    */
   isActive: (key: string) => boolean
+
+  /**
+   * 关闭所有弹出菜单
+   */
+  closeAllPopups?: () => void
 }
 
 /**
