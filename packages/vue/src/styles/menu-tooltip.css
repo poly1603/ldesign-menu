@@ -144,6 +144,17 @@
   background: var(--l-menu-popup-bg, #fff);
 }
 
+/* 右侧子菜单定位 - 从顶部开始 */
+.l-menu-tooltip--has-children .l-menu-tooltip__popup--right {
+  top: 0;
+  transform: none;
+}
+
+.l-menu-tooltip--has-children .l-menu-tooltip__popup--right .l-menu-tooltip__arrow {
+  top: 16px;
+  margin-top: 0;
+}
+
 .l-menu-tooltip__menu-list {
   margin: 0;
   padding: 0;
@@ -168,6 +179,57 @@
 .l-menu-tooltip__menu-item--selected {
   color: var(--l-menu-selected-text-color, #6366f1);
   background: var(--l-menu-selected-bg-color, #eef2ff);
+}
+
+/* 折叠模式下 Tooltip 中的菜单项样式 */
+.l-menu-tooltip--has-children .l-menu-item,
+.l-menu-tooltip--has-children .l-submenu {
+  display: block;
+  width: 100%;
+  margin: 0;
+  opacity: 1;
+  visibility: visible;
+}
+
+.l-menu-tooltip--has-children .l-menu-item__content,
+.l-menu-tooltip--has-children .l-submenu__title {
+  justify-content: flex-start !important;
+  padding: 0 12px !important;
+  margin: 0 !important;
+  height: 36px;
+  width: auto !important;
+}
+
+.l-menu-tooltip--has-children .l-menu-item__icon,
+.l-menu-tooltip--has-children .l-submenu__icon {
+  margin-right: 10px !important;
+  font-size: 16px;
+  width: 16px !important;
+  height: 16px !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+.l-menu-tooltip--has-children .l-menu-item__label,
+.l-menu-tooltip--has-children .l-submenu__label {
+  opacity: 1 !important;
+  visibility: visible !important;
+  width: auto !important;
+  position: static !important;
+  overflow: visible !important;
+  pointer-events: auto !important;
+}
+
+.l-menu-tooltip--has-children .l-submenu__arrow {
+  opacity: 1 !important;
+  visibility: visible !important;
+  width: auto !important;
+  position: static !important;
+  pointer-events: auto !important;
+}
+
+.l-menu-tooltip--has-children .l-menu-item--selected::before {
+  display: none;
 }
 
 /* 深色模式 */

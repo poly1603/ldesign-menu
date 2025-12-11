@@ -176,11 +176,13 @@ function toggleCollapse() {
 .collapsed-demo-container {
   display: flex;
   gap: 24px;
+  overflow: visible;
 }
 
 .collapsed-preview {
   transition: width 0.3s ease;
   flex-shrink: 0;
+  overflow: visible;
 }
 
 .content-preview {

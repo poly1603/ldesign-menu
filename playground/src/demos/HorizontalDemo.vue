@@ -163,7 +163,7 @@ const selectedKey = ref('home')
         <span class="demo-card-title">多个一级菜单项</span>
       </div>
       <div class="demo-card-body">
-        <div class="menu-preview menu-preview-horizontal" style="overflow-x: auto;">
+        <div class="menu-preview menu-preview-horizontal" style="overflow: visible;">
           <LMenu v-model:selected-key="selectedKey" mode="horizontal" expand-mode="popup" trigger="hover">
             <LMenuItem item-key="h-home" label="首页">
               <template #icon>
@@ -220,6 +220,44 @@ const selectedKey = ref('home')
             <LMenuItem item-key="h-help" label="帮助">
               <template #icon>
                 <HelpCircle :size="18" />
+              </template>
+            </LMenuItem>
+            <LMenuItem item-key="h-analytics" label="分析">
+              <template #icon>
+                <BarChart3 :size="18" />
+              </template>
+            </LMenuItem>
+            <LMenuItem item-key="h-messages" label="消息">
+              <template #icon>
+                <Mail :size="18" />
+              </template>
+            </LMenuItem>
+            <LSubMenu item-key="h-tools" label="工具">
+              <template #icon>
+                <Layers :size="18" />
+              </template>
+              <LMenuItem item-key="h-tool1" label="代码生成" />
+              <LMenuItem item-key="h-tool2" label="数据导入" />
+              <LMenuItem item-key="h-tool3" label="批量处理" />
+            </LSubMenu>
+            <LMenuItem item-key="h-calendar" label="日历">
+              <template #icon>
+                <Database :size="18" />
+              </template>
+            </LMenuItem>
+            <LMenuItem item-key="h-team" label="团队">
+              <template #icon>
+                <Users :size="18" />
+              </template>
+            </LMenuItem>
+            <LMenuItem item-key="h-cloud" label="云服务">
+              <template #icon>
+                <Cloud :size="18" />
+              </template>
+            </LMenuItem>
+            <LMenuItem item-key="h-security" label="安全">
+              <template #icon>
+                <Shield :size="18" />
               </template>
             </LMenuItem>
           </LMenu>

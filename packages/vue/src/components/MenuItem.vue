@@ -74,8 +74,8 @@ function handleMouseLeave(): void {
 </script>
 
 <template>
-  <!-- 折叠模式使用 Tooltip -->
-  <MenuTooltip v-if="isCollapsed && label" :content="label" placement="right">
+  <!-- 折叠模式且是顶级菜单项时使用 Tooltip -->
+  <MenuTooltip v-if="isCollapsed && level === 0 && label" :content="label" placement="right">
     <li :class="classes" role="menuitem" :aria-disabled="disabled" :tabindex="disabled ? -1 : 0" @click="handleClick"
       @mouseenter="handleMouseEnter" @mouseleave="handleMouseLeave">
       <component :is="href ? 'a' : 'div'" class="l-menu-item__content" :href="href" :target="href ? target : undefined">
@@ -96,8 +96,8 @@ function handleMouseLeave(): void {
   </MenuTooltip>
 
   <!-- 非折叠模式 -->
-  <li v-else :class="classes" role="menuitem" :aria-disabled="disabled" :tabindex="disabled ? -1 : 0"
-    @click="handleClick" @mouseenter="handleMouseEnter" @mouseleave="handleMouseLeave">
+  <li v-else :class="classes" role="menuitem" :data-key="itemKey" :aria-disabled="disabled"
+    :tabindex="disabled ? -1 : 0" @click="handleClick" @mouseenter="handleMouseEnter" @mouseleave="handleMouseLeave">
     <component :is="href ? 'a' : 'div'" class="l-menu-item__content" :href="href" :target="href ? target : undefined"
       :style="{ paddingLeft }">
       <span v-if="icon || $slots.icon" class="l-menu-item__icon">

@@ -8,3 +8,6 @@
 @import './menu.css';
 @import './menu-group.css';
 @import './menu-tooltip.css';
+
+/* 从 core 包导入溢出样式 */
+@import '@ldesign/menu-core/src/styles/overflow.css';

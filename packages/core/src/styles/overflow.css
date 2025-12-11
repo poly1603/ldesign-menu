@@ -1,0 +1,165 @@
+/**
+ * 水平菜单溢出折叠样式
+ * @module styles/overflow
+ */
+
+/* ========================
+   隐藏溢出的菜单项
+   ======================== */
+.l-menu--horizontal .l-menu-item--hidden,
+.l-menu--horizontal .l-submenu.l-menu-item--hidden {
+  display: none !important;
+}
+
+/* ========================
+   "更多"按钮样式
+   ======================== */
+.l-menu__more {
+  flex-shrink: 0;
+  position: relative;
+  overflow: visible !important;
+}
+
+.l-menu__more .l-submenu__title {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0 16px;
+  height: 100%;
+  cursor: pointer;
+  color: var(--l-menu-text-color);
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.l-menu__more:hover .l-submenu__title {
+  background: var(--l-menu-hover-bg-color);
+  color: var(--l-menu-hover-text-color);
+  border-radius: var(--l-menu-border-radius);
+}
+
+.l-menu__more.l-submenu--open .l-submenu__title {
+  background: var(--l-menu-selected-bg-color);
+  color: var(--l-menu-selected-text-color);
+  border-radius: var(--l-menu-border-radius);
+}
+
+.l-menu__more-label {
+  font-size: 14px;
+}
+
+/* ========================
+   "更多"弹出菜单样式
+   ======================== */
+.l-menu__more-popup {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  left: auto;
+  margin-top: 8px;
+  min-width: 180px;
+  max-height: 400px;
+  overflow-y: auto;
+  z-index: 1000;
+  background: var(--l-menu-popup-bg-color, #fff);
+  border: 1px solid var(--l-menu-popup-border-color, #e5e5e5);
+  border-radius: var(--l-menu-border-radius, 4px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* 向上弹出 */
+.l-menu__more-popup.l-menu__more-popup--top {
+  top: auto;
+  bottom: 100%;
+  margin-top: 0;
+  margin-bottom: 8px;
+}
+
+/* ========================
+   "更多"菜单列表样式
+   ======================== */
+.l-menu__more-list {
+  list-style: none;
+  margin: 0;
+  padding: 4px 0;
+}
+
+.l-menu__more-list .l-menu-item,
+.l-menu__more-list .l-submenu {
+  display: block !important;
+  position: relative;
+}
+
+.l-menu__more-list .l-menu-item__content {
+  padding: 10px 16px;
+  min-height: 40px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  color: var(--l-menu-text-color);
+  transition: all 0.2s ease;
+}
+
+.l-menu__more-list .l-menu-item__content:hover {
+  background: var(--l-menu-hover-bg-color);
+  color: var(--l-menu-hover-text-color);
+}
+
+.l-menu__more-list .l-menu-item--selected .l-menu-item__content {
+  background: var(--l-menu-selected-bg-color);
+  color: var(--l-menu-selected-text-color);
+}
+
+.l-menu__more-list .l-submenu__title {
+  padding: 10px 16px;
+  min-height: 40px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  color: var(--l-menu-text-color);
+  transition: all 0.2s ease;
+}
+
+.l-menu__more-list .l-submenu__title:hover {
+  background: var(--l-menu-hover-bg-color);
+  color: var(--l-menu-hover-text-color);
+}
+
+/* "更多"中的子菜单箭头 */
+.l-menu__more-list .l-submenu__arrow {
+  margin-left: auto;
+  transform: rotate(-90deg);
+  transition: transform 0.2s ease;
+}
+
+.l-menu__more-list .l-submenu--open>.l-submenu__title .l-submenu__arrow {
+  transform: rotate(0deg);
+}
+
+/* "更多"中的子菜单弹出位置 - 向左展开 */
+.l-menu__more-list .l-submenu__popup {
+  position: absolute;
+  right: 100%;
+  left: auto;
+  top: 0;
+  margin-right: 4px;
+  margin-top: 0;
+  min-width: 160px;
+  background: var(--l-menu-popup-bg-color, #fff);
+  border: 1px solid var(--l-menu-popup-border-color, #e5e5e5);
+  border-radius: var(--l-menu-border-radius, 4px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* ========================
+   确保父容器允许溢出
+   ======================== */
+.l-menu--horizontal {
+  overflow: visible !important;
+}
+
+.l-menu--horizontal .l-menu__list {
+  overflow: visible !important;
+}

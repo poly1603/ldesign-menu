@@ -34,6 +34,18 @@
       "require": "./lib/managers/*.cjs",
       "default": "./es/managers/*.js"
     },
+    "./styles": {
+      "types": "./es/styles/index.d.ts",
+      "import": "./es/styles/index.js",
+      "require": "./lib/styles/index.cjs",
+      "default": "./es/styles/index.js"
+    },
+    "./styles/*": {
+      "types": "./es/styles/*.d.ts",
+      "import": "./es/styles/*.js",
+      "require": "./lib/styles/*.cjs",
+      "default": "./es/styles/*.js"
+    },
     "./types": {
       "types": "./es/types/index.d.ts",
       "import": "./es/types/index.js",

@@ -4,7 +4,7 @@
  * 支持内联展开和弹出两种模式
  */
 import type { Component } from 'vue'
-import { computed, markRaw, onUnmounted, ref, watch, nextTick } from 'vue'
+import { computed, markRaw, onMounted, onUnmounted, ref, watch, nextTick } from 'vue'
 import { ChevronDown, ChevronRight } from 'lucide-vue-next'
 import { provideSubMenuContext, useMenuContext, useSubMenuContext } from '../composables'
 import MenuTooltip from './MenuTooltip.vue'
@@ -34,12 +34,26 @@ provideSubMenuContext({
   parentKey: props.itemKey,
 })
 
+// 注册 SubMenu（用于插槽模式下的手风琴支持）
+onMounted(() => {
+  menuContext.registerSubMenu?.({
+    key: props.itemKey,
+    level: level.value,
+    parentKey: parentContext.parentKey,
+  })
+})
+
+onUnmounted(() => {
+  menuContext.unregisterSubMenu?.(props.itemKey)
+})
+
 const isOpen = computed(() => menuContext.isOpen(props.itemKey))
 const isActive = computed(() => menuContext.isActive(props.itemKey))
 const isCollapsed = computed(() => menuContext.collapsed.value)
 const isHorizontal = computed(() => menuContext.mode.value === 'horizontal')
 const trigger = computed(() => menuContext.trigger?.value || 'click')
 const expandMode = computed(() => menuContext.expandMode?.value || 'inline')
+const accordion = computed(() => menuContext.accordion?.value ?? false)
 
 const isPopupMode = computed(() => {
   if (isHorizontal.value) return true
@@ -136,6 +150,13 @@ const classes = computed(() => ({
   [`l-submenu--placement-${placement.value}`]: isPopupMode.value,
 }))
 
+// 手风琴模式：展开前先关闭同级菜单
+function closeOtherMenusIfAccordion(): void {
+  if (accordion.value && !isOpen.value) {
+    menuContext.closeOtherSameLevelMenus?.(props.itemKey, level.value, parentContext.parentKey)
+  }
+}
+
 function handleTitleClick(event: MouseEvent): void {
   if (props.disabled) {
     event.preventDefault()
@@ -149,11 +170,19 @@ function handleTitleClick(event: MouseEvent): void {
 
   // 弹出模式下，click 触发时切换展开状态
   if (isPopupMode.value && trigger.value === 'click') {
+    // 手风琴模式：展开前先关闭同级菜单
+    if (!isOpen.value) {
+      closeOtherMenusIfAccordion()
+    }
     menuContext.toggleOpen(props.itemKey)
     return
   }
 
   // 内联模式下正常切换
+  // 手风琴模式：展开前先关闭同级菜单
+  if (!isOpen.value) {
+    closeOtherMenusIfAccordion()
+  }
   menuContext.toggleOpen(props.itemKey)
 }
 
@@ -173,12 +202,14 @@ function handleMouseEnter(): void {
   // 弹出模式 + hover 触发：鼠标进入时展开
   if (isPopupMode.value && trigger.value === 'hover') {
     if (!isOpen.value) {
+      closeOtherMenusIfAccordion()
       menuContext.open(props.itemKey)
     }
   }
   // 非弹出模式 + hover 触发
   else if (trigger.value === 'hover' && !isPopupMode.value) {
     if (!isOpen.value) {
+      closeOtherMenusIfAccordion()
       menuContext.open(props.itemKey)
     }
   }
@@ -188,13 +219,14 @@ function handleMouseLeave(): void {
   menuContext.setHoverKey(null)
 
   // 弹出模式 + hover 触发：鼠标离开时收起
+  // 增加延迟时间，给用户足够时间移动到子菜单popup
   if (isPopupMode.value && trigger.value === 'hover') {
     hoverTimer = setTimeout(() => {
       isHovered.value = false
       if (isOpen.value) {
         menuContext.close(props.itemKey)
       }
-    }, 150)
+    }, 300) // 增加延迟到300ms
   }
   // 非弹出模式 + hover 触发
   else if (trigger.value === 'hover' && !isPopupMode.value) {
@@ -224,13 +256,14 @@ function handlePopupMouseEnter(): void {
 
 function handlePopupMouseLeave(): void {
   // hover 触发时，鼠标离开 popup 后关闭
+  // 增加延迟时间，给用户足够时间移动到嵌套子菜单
   if (trigger.value === 'hover') {
     hoverTimer = setTimeout(() => {
       isHovered.value = false
       if (isPopupMode.value && isOpen.value) {
         menuContext.close(props.itemKey)
       }
-    }, 150)
+    }, 300) // 增加延迟到300ms，便于移动到嵌套子菜单
   }
   // click 触发时，只更新 hover 状态，不关闭
   else {
@@ -248,23 +281,18 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <!-- 折叠模式使用 Tooltip -->
-  <MenuTooltip v-if="isCollapsed && level === 0" :content="label" :has-children="true" placement="right">
-    <li :class="classes" role="menuitem" :aria-expanded="isOpen" :aria-disabled="disabled" :tabindex="disabled ? -1 : 0"
-      @mouseenter="handleMouseEnter" @mouseleave="handleMouseLeave">
-      <div class="l-submenu__title" @click="handleTitleClick">
+  <!-- 折叠模式使用 Tooltip - 只显示图标，点击或hover时从右侧弹出子菜单 -->
+  <MenuTooltip v-if="isCollapsed && level === 0" :content="label" :has-children="true" placement="right" trigger="both">
+    <li :class="classes" role="menuitem" :aria-expanded="isOpen" :aria-disabled="disabled"
+      :tabindex="disabled ? -1 : 0">
+      <div class="l-submenu__title">
         <span v-if="icon || $slots.icon" class="l-submenu__icon">
           <slot name="icon">
             <component v-if="icon && typeof icon !== 'string'" :is="icon" :size="18" />
             <span v-else-if="icon" class="l-submenu__icon-text">{{ icon }}</span>
           </slot>
         </span>
-        <span class="l-submenu__label">
-          <slot name="title">{{ label }}</slot>
-        </span>
-        <span class="l-submenu__arrow">
-          <component :is="ChevronRightIcon" :size="18" class="l-submenu__arrow-icon" />
-        </span>
+        <!-- 折叠模式下不显示 label 和 arrow -->
       </div>
     </li>
 

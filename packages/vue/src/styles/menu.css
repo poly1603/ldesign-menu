@@ -77,54 +77,82 @@
   font-weight: 500;
 }
 
-/* 水平模式下划线指示器 */
+/* 水平模式下划线指示器 - 已禁用，改用背景色hover效果 */
 .l-menu--horizontal .l-menu-item__content::after,
 .l-menu--horizontal .l-submenu__title::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 50%;
-  width: 0;
-  height: 2px;
-  background: var(--l-menu-selected-indicator-color);
-  border-radius: 2px 2px 0 0;
-  transition: all 0.25s var(--l-menu-transition-timing);
-  transform: translateX(-50%);
+  display: none;
 }
 
-.l-menu--horizontal .l-menu-item:hover .l-menu-item__content::after,
-.l-menu--horizontal .l-menu-item--selected .l-menu-item__content::after,
-.l-menu--horizontal .l-submenu:hover>.l-submenu__title::after,
-.l-menu--horizontal .l-submenu--open>.l-submenu__title::after,
-.l-menu--horizontal .l-submenu--active>.l-submenu__title::after {
-  width: calc(100% - 16px);
-}
-
+/* 水平模式 hover 效果 - 使用背景色 */
 .l-menu--horizontal .l-menu-item:hover:not(.l-menu-item--disabled) .l-menu-item__content,
 .l-menu--horizontal .l-submenu:hover:not(.l-submenu--disabled)>.l-submenu__title {
-  background: transparent;
-  color: var(--l-menu-selected-text-color);
+  background: var(--l-menu-hover-bg-color);
+  color: var(--l-menu-hover-text-color);
+  border-radius: var(--l-menu-border-radius);
 }
 
+/* 水平模式选中效果 */
 .l-menu--horizontal .l-menu-item--selected:not(.l-menu-item--disabled) .l-menu-item__content {
-  background: transparent;
+  background: var(--l-menu-selected-bg-color);
   color: var(--l-menu-selected-text-color);
+  border-radius: var(--l-menu-border-radius);
+}
+
+/* 水平模式子菜单激活效果 */
+.l-menu--horizontal .l-submenu--active:not(.l-submenu--disabled)>.l-submenu__title,
+.l-menu--horizontal .l-submenu--open:not(.l-submenu--disabled)>.l-submenu__title {
+  background: var(--l-menu-selected-bg-color);
+  color: var(--l-menu-selected-text-color);
+  border-radius: var(--l-menu-border-radius);
 }
 
 .l-menu--horizontal .l-menu-item--selected::before {
   display: none;
 }
 
-/* 水平模式箭头旋转 */
-.l-menu--horizontal .l-submenu--open>.l-submenu__title .l-submenu__arrow {
+/* 水平模式箭头旋转 - 应用在图标上以保持正确的旋转中心 */
+.l-menu--horizontal .l-submenu--open>.l-submenu__title .l-submenu__arrow-icon {
   transform: rotate(180deg);
+  transform-origin: center;
 }
 
-/* 水平模式弹出位置 */
+/* 水平模式弹出位置 - 一级子菜单向下展开 */
 .l-menu--horizontal .l-submenu--level-0>.l-submenu__popup {
   top: 100%;
   left: 0;
   margin-top: 8px;
+  margin-left: 0;
+}
+
+/* 水平模式弹出位置 - 二级及以上子菜单向右展开 */
+.l-menu--horizontal .l-submenu__popup .l-submenu>.l-submenu__popup {
+  top: -6px;
+  left: 100%;
+  margin-top: 0;
+  margin-left: 8px;
+}
+
+/* 水平模式下嵌套子菜单箭头方向 - 向右 */
+.l-menu--horizontal .l-submenu__popup .l-submenu .l-submenu__arrow-icon {
+  transform: rotate(0deg) !important;
+}
+
+/* 水平模式下嵌套子菜单展开时箭头不旋转（保持向右） */
+.l-menu--horizontal .l-submenu__popup .l-submenu--open .l-submenu__arrow-icon {
+  transform: rotate(0deg) !important;
+}
+
+/* 水平模式下嵌套子菜单需要正确的z-index层级 */
+.l-menu--horizontal .l-submenu__popup .l-submenu {
+  position: relative;
+}
+
+.l-menu--horizontal .l-submenu__popup .l-submenu__popup {
+  z-index: 1051;
+}
+
+.l-menu--horizontal .l-submenu__popup .l-submenu__popup .l-submenu__popup {
+  z-index: 1052;
 }
 
 /* ========================
@@ -234,8 +262,8 @@
   z-index: 1;
 }
 
-/* Hover 状态 */
-.l-menu-item:hover:not(.l-menu-item--disabled) .l-menu-item__content {
+/* Hover 状态 - 排除已选中的菜单项 */
+.l-menu-item:hover:not(.l-menu-item--disabled):not(.l-menu-item--selected) .l-menu-item__content {
   background-color: var(--l-menu-hover-bg-color);
   color: var(--l-menu-hover-text-color);
 }
@@ -537,7 +565,8 @@
   border-radius: var(--l-menu-popup-border-radius, 8px);
   box-shadow: var(--l-menu-popup-shadow, 0 6px 16px 0 rgba(0, 0, 0, 0.08), 0 3px 6px -4px rgba(0, 0, 0, 0.12), 0 9px 28px 8px rgba(0, 0, 0, 0.05));
   z-index: 1050;
-  overflow-y: auto;
+  /* 允许嵌套子菜单溢出显示 */
+  overflow: visible;
   overscroll-behavior: contain;
 }
 
@@ -546,6 +575,7 @@
   padding: 0;
   list-style: none;
   display: block;
+  overflow: visible;
 }
 
 /* 确保弹出菜单内的子项可见 */
@@ -556,6 +586,7 @@
   margin: 0;
   opacity: 1;
   visibility: visible;
+  position: relative;
 }
 
 /* 弹出菜单内样式 */
@@ -588,6 +619,20 @@
 
 .l-submenu__popup .l-menu-item--selected::before {
   display: none;
+}
+
+/* 弹出菜单内的hover效果 - 与一级菜单区分 */
+.l-submenu__popup .l-menu-item:hover:not(.l-menu-item--disabled) .l-menu-item__content,
+.l-submenu__popup .l-submenu:hover:not(.l-submenu--disabled)>.l-submenu__title {
+  background-color: var(--l-menu-hover-bg-color);
+  color: var(--l-menu-hover-text-color);
+  border-radius: var(--l-menu-border-radius-small, 6px);
+}
+
+/* 弹出菜单内选中项的样式 */
+.l-submenu__popup .l-menu-item--selected:not(.l-menu-item--disabled) .l-menu-item__content {
+  background-color: var(--l-menu-selected-bg-color);
+  color: var(--l-menu-selected-text-color);
 }
 
 /* 弹出方向：右侧 */
@@ -727,3 +772,5 @@
     animation-duration: 0.01ms !important;
   }
 }
+
+/* 溢出折叠样式已移至 @ldesign/menu-core/src/styles/overflow.css */

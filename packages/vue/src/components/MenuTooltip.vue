@@ -12,6 +12,7 @@ export interface MenuTooltipProps {
   delay?: number
   disabled?: boolean
   hasChildren?: boolean
+  trigger?: 'hover' | 'click' | 'both'
 }
 
 const props = withDefaults(defineProps<MenuTooltipProps>(), {
@@ -20,6 +21,7 @@ const props = withDefaults(defineProps<MenuTooltipProps>(), {
   disabled: false,
   visible: false,
   hasChildren: false,
+  trigger: 'both', // 默认同时支持 hover 和 click
 })
 
 const internalVisible = ref(false)
@@ -78,16 +80,45 @@ function handlePopupMouseLeave(): void {
   hide()
 }
 
+function toggle(): void {
+  if (props.disabled) return
+
+  if (internalVisible.value) {
+    internalVisible.value = false
+  } else {
+    internalVisible.value = true
+  }
+}
+
+function handleClick(event: MouseEvent): void {
+  if (props.trigger === 'click' || props.trigger === 'both') {
+    event.stopPropagation()
+    toggle()
+  }
+}
+
+function handleMouseEnter(): void {
+  if (props.trigger === 'hover' || props.trigger === 'both') {
+    show()
+  }
+}
+
+function handleMouseLeave(): void {
+  if (props.trigger === 'hover' || props.trigger === 'both') {
+    hide()
+  }
+}
+
 onUnmounted(() => {
   if (showTimer) clearTimeout(showTimer)
   if (hideTimer) clearTimeout(hideTimer)
 })
 
-defineExpose({ show, hide })
+defineExpose({ show, hide, toggle })
 </script>
 
 <template>
-  <div :class="wrapperClasses" @mouseenter="show" @mouseleave="hide">
+  <div :class="wrapperClasses" @mouseenter="handleMouseEnter" @mouseleave="handleMouseLeave" @click="handleClick">
     <div ref="triggerRef" class="l-menu-tooltip__trigger">
       <slot />
     </div>

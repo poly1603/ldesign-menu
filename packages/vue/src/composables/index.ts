@@ -16,6 +16,7 @@ export {
 export type {
   MenuContext,
   SubMenuContext,
+  SubMenuInfo,
 } from './useMenu'
 
 export { useMenuState } from './useMenuState'

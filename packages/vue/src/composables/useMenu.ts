@@ -8,6 +8,15 @@ import type { ExpandMode, MenuMode, MenuState, MenuTheme, SubMenuPlacement, Trig
 import { inject, provide } from 'vue'
 
 /**
+ * SubMenu 注册信息
+ */
+export interface SubMenuInfo {
+  key: string
+  level: number
+  parentKey?: string
+}
+
+/**
  * 菜单上下文
  */
 export interface MenuContext {
@@ -50,6 +59,11 @@ export interface MenuContext {
    * 当前状态
    */
   state: Ref<MenuState>
+
+  /**
+   * 手风琴模式
+   */
+  accordion?: Ref<boolean>
 
   /**
    * 选中菜单项
@@ -95,6 +109,21 @@ export interface MenuContext {
    * 关闭所有弹出菜单
    */
   closeAllPopups?: () => void
+
+  /**
+   * 注册 SubMenu（用于插槽模式下的手风琴支持）
+   */
+  registerSubMenu?: (info: SubMenuInfo) => void
+
+  /**
+   * 注销 SubMenu
+   */
+  unregisterSubMenu?: (key: string) => void
+
+  /**
+   * 关闭同级的其他菜单（手风琴模式）
+   */
+  closeOtherSameLevelMenus?: (key: string, level: number, parentKey?: string) => void
 }
 
 /**
