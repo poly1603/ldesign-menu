@@ -328,7 +328,7 @@ let overflowManager: OverflowManager | null = null
 
 // 计算是否需要显示"更多"按钮
 const showMoreButton = computed(() => {
-  return props.mode === 'horizontal' && overflowManager?.showMoreButton
+  return props.mode === 'horizontal' && overflowItemsHtml.value.length > 0
 })
 
 // 监听"更多"弹出层打开
