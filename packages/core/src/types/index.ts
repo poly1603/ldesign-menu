@@ -19,7 +19,10 @@ export { DEFAULT_MENU_CONFIG } from './menu-config'
 
 // 菜单项类型
 export type {
+  BadgeStatus,
+  BadgeType,
   FlatMenuItem,
+  MenuBadge,
   MenuDividerItem,
   MenuGroupItem,
   MenuItem,

@@ -8,33 +8,33 @@
   --l-menu-primary-color: var(--color-primary-default, #1677ff);
   --l-menu-primary-color-hover: var(--color-primary-hover, #4096ff);
   --l-menu-primary-color-active: var(--color-primary-active, #0958d9);
-  --l-menu-primary-bg: var(--color-primary-bg, #e6f4ff);
-  --l-menu-primary-bg-hover: var(--color-primary-bg-hover, #bae0ff);
+  --l-menu-primary-bg: transparent;
+  --l-menu-primary-bg-hover: transparent;
 
   /* ========== 颜色系统 ========== */
-  /* 基础颜色 */
+  /* 基础颜色 - 继承父容器颜色 */
   --l-menu-bg-color: transparent;
-  --l-menu-text-color: var(--color-text-primary, rgba(0, 0, 0, 0.88));
-  --l-menu-text-color-secondary: var(--color-text-secondary, rgba(0, 0, 0, 0.65));
-  --l-menu-text-color-tertiary: var(--color-text-tertiary, rgba(0, 0, 0, 0.45));
-  --l-menu-text-color-disabled: var(--color-text-disabled, rgba(0, 0, 0, 0.25));
-  --l-menu-border-color: var(--color-border, rgba(5, 5, 5, 0.06));
+  --l-menu-text-color: inherit;
+  --l-menu-text-color-secondary: inherit;
+  --l-menu-text-color-tertiary: inherit;
+  --l-menu-text-color-disabled: var(--color-text-disabled, rgba(128, 128, 128, 0.5));
+  --l-menu-border-color: var(--color-border, rgba(128, 128, 128, 0.2));
 
-  /* Hover 状态 */
-  --l-menu-hover-bg-color: var(--color-fill-quaternary, rgba(0, 0, 0, 0.02));
-  --l-menu-hover-text-color: var(--l-menu-text-color);
+  /* Hover 状态 - 浅色背景 */
+  --l-menu-hover-bg-color: var(--color-fill-secondary, rgba(0, 0, 0, 0.04));
+  --l-menu-hover-text-color: inherit;
 
-  /* Active 状态 */
-  --l-menu-active-bg-color: var(--color-fill-tertiary, rgba(0, 0, 0, 0.04));
+  /* Active 状态 - 按下时稍深 */
+  --l-menu-active-bg-color: var(--color-fill-tertiary, rgba(0, 0, 0, 0.06));
   --l-menu-active-text-color: var(--l-menu-primary-color);
 
-  /* Selected 状态 */
-  --l-menu-selected-bg-color: var(--l-menu-primary-bg);
-  --l-menu-selected-text-color: var(--l-menu-primary-color);
-  --l-menu-selected-indicator-color: var(--l-menu-primary-color);
+  /* Selected 状态 - 浅色主题背景 */
+  --l-menu-selected-bg-color: var(--color-primary-100, rgba(var(--color-primary-rgb, 22, 119, 255), 0.1));
+  --l-menu-selected-text-color: var(--color-primary-default, #1677ff);
+  --l-menu-selected-indicator-color: var(--color-primary-default, #1677ff);
 
   /* Focus 状态 */
-  --l-menu-focus-shadow: 0 0 0 2px var(--l-menu-primary-bg);
+  --l-menu-focus-shadow: none;
 
   /* 分组标题 */
   --l-menu-group-title-color: var(--l-menu-text-color-tertiary);
@@ -133,40 +133,45 @@
   --l-menu-expanded-width: 256px;
 }
 
-/* ========== 浅色主题（Ant Design 风格） ========== */
+/* ========== 浅色主题 ========== */
 .l-menu--light {
   --l-menu-bg-color: transparent;
   --l-menu-text-color: rgba(0, 0, 0, 0.88);
   --l-menu-text-color-secondary: rgba(0, 0, 0, 0.65);
   --l-menu-text-color-tertiary: rgba(0, 0, 0, 0.45);
+  --l-menu-text-color-disabled: rgba(0, 0, 0, 0.25);
   --l-menu-hover-bg-color: rgba(0, 0, 0, 0.04);
-  --l-menu-selected-bg-color: #e6f4ff;
-  --l-menu-selected-text-color: #1677ff;
-  --l-menu-selected-indicator-color: #1677ff;
+  --l-menu-hover-text-color: rgba(0, 0, 0, 1);
+  --l-menu-active-bg-color: rgba(0, 0, 0, 0.06);
+  --l-menu-selected-bg-color: var(--color-primary-100, rgba(var(--color-primary-rgb, 22, 119, 255), 0.1));
+  --l-menu-selected-text-color: var(--l-menu-primary-color);
+  --l-menu-selected-indicator-color: var(--l-menu-primary-color);
 }
 
-/* ========== 深色主题（Ant Design 风格） ========== */
+/* ========== 深色主题 ========== */
 .l-menu--dark {
-  --l-menu-bg-color: #001529;
+  --l-menu-bg-color: transparent;
   --l-menu-text-color: rgba(255, 255, 255, 0.85);
   --l-menu-text-color-secondary: rgba(255, 255, 255, 0.65);
   --l-menu-text-color-tertiary: rgba(255, 255, 255, 0.45);
   --l-menu-text-color-disabled: rgba(255, 255, 255, 0.25);
-  --l-menu-border-color: rgba(255, 255, 255, 0.12);
-  --l-menu-hover-bg-color: transparent;
-  --l-menu-hover-text-color: #ffffff;
-  --l-menu-active-bg-color: rgba(255, 255, 255, 0.08);
-  --l-menu-selected-bg-color: #1677ff;
+  --l-menu-border-color: rgba(255, 255, 255, 0.08);
+  --l-menu-hover-bg-color: rgba(255, 255, 255, 0.08);
+  --l-menu-hover-text-color: rgba(255, 255, 255, 1);
+  --l-menu-active-bg-color: rgba(255, 255, 255, 0.12);
+  --l-menu-selected-bg-color: rgba(255, 255, 255, 0.15);
   --l-menu-selected-text-color: #ffffff;
-  --l-menu-selected-indicator-color: #1677ff;
+  --l-menu-selected-indicator-color: #ffffff;
   --l-menu-group-title-color: rgba(255, 255, 255, 0.45);
-  --l-menu-popup-bg: #001529;
+  --l-menu-popup-bg: #1f1f1f;
+  --l-menu-popup-border-color: rgba(255, 255, 255, 0.12);
   --l-menu-popup-shadow:
     0 6px 16px 0 rgba(0, 0, 0, 0.32),
     0 3px 6px -4px rgba(0, 0, 0, 0.48),
     0 9px 28px 8px rgba(0, 0, 0, 0.2);
-  --l-menu-primary-color: #1677ff;
-  --l-menu-primary-bg: rgba(22, 119, 255, 0.15);
+  --l-menu-primary-color: #ffffff;
+  --l-menu-primary-bg: transparent;
+  --l-menu-divider-color: rgba(255, 255, 255, 0.08);
 }
 
 /* ========== 尺寸变体 ========== */
@@ -185,19 +190,28 @@
 /* ========== 全局深色模式 ========== */
 [data-theme-mode="dark"] .l-menu,
 [data-theme-mode="dark"] .l-menu--light {
-  --l-menu-bg-color: #141414;
+  --l-menu-bg-color: transparent;
   --l-menu-text-color: rgba(255, 255, 255, 0.85);
   --l-menu-text-color-secondary: rgba(255, 255, 255, 0.65);
   --l-menu-text-color-tertiary: rgba(255, 255, 255, 0.45);
+  --l-menu-text-color-disabled: rgba(255, 255, 255, 0.25);
   --l-menu-hover-bg-color: rgba(255, 255, 255, 0.08);
-  --l-menu-selected-bg-color: rgba(22, 119, 255, 0.15);
-  --l-menu-selected-text-color: #1677ff;
-  --l-menu-border-color: rgba(255, 255, 255, 0.12);
+  --l-menu-hover-text-color: rgba(255, 255, 255, 1);
+  --l-menu-active-bg-color: rgba(255, 255, 255, 0.12);
+  --l-menu-selected-bg-color: rgba(255, 255, 255, 0.15);
+  --l-menu-selected-text-color: #ffffff;
+  --l-menu-selected-indicator-color: #ffffff;
+  --l-menu-border-color: rgba(255, 255, 255, 0.08);
+  --l-menu-group-title-color: rgba(255, 255, 255, 0.45);
   --l-menu-popup-bg: #1f1f1f;
+  --l-menu-popup-border-color: rgba(255, 255, 255, 0.12);
   --l-menu-popup-shadow:
     0 6px 16px 0 rgba(0, 0, 0, 0.32),
     0 3px 6px -4px rgba(0, 0, 0, 0.48),
     0 9px 28px 8px rgba(0, 0, 0, 0.2);
+  --l-menu-divider-color: rgba(255, 255, 255, 0.08);
+  --l-menu-danger-color: #ff7875;
+  --l-menu-danger-bg-color: transparent;
 }
 
 /* ========== 边框样式 ========== */

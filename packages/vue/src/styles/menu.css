@@ -12,6 +12,8 @@
   box-sizing: border-box;
   margin: 0;
   padding: 0;
+  width: 100%;
+  max-width: 100%;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   font-size: var(--l-menu-font-size);
   font-weight: var(--l-menu-font-weight);
@@ -20,6 +22,7 @@
   background-color: var(--l-menu-bg-color);
   transition: width var(--l-menu-transition-duration) var(--l-menu-transition-timing);
   outline: none;
+  overflow: hidden;
 }
 
 .l-menu *,
@@ -32,6 +35,8 @@
   margin: 0;
   padding: var(--l-menu-padding);
   list-style: none;
+  width: 100%;
+  max-width: 100%;
 }
 
 /* ========================
@@ -83,27 +88,22 @@
   display: none;
 }
 
-/* 水平模式 hover 效果 - 使用背景色 */
+/* 水平模式 hover 效果 - 仅文字颜色变化 */
 .l-menu--horizontal .l-menu-item:hover:not(.l-menu-item--disabled) .l-menu-item__content,
 .l-menu--horizontal .l-submenu:hover:not(.l-submenu--disabled)>.l-submenu__title {
-  background: var(--l-menu-hover-bg-color);
   color: var(--l-menu-hover-text-color);
-  border-radius: var(--l-menu-border-radius);
 }
 
-/* 水平模式选中效果 */
+/* 水平模式选中效果 - 仅文字颜色和字重变化 */
 .l-menu--horizontal .l-menu-item--selected:not(.l-menu-item--disabled) .l-menu-item__content {
-  background: var(--l-menu-selected-bg-color);
   color: var(--l-menu-selected-text-color);
-  border-radius: var(--l-menu-border-radius);
+  font-weight: var(--l-menu-font-weight-selected);
 }
 
-/* 水平模式子菜单激活效果 */
+/* 水平模式子菜单激活效果 - 仅文字颜色变化 */
 .l-menu--horizontal .l-submenu--active:not(.l-submenu--disabled)>.l-submenu__title,
 .l-menu--horizontal .l-submenu--open:not(.l-submenu--disabled)>.l-submenu__title {
-  background: var(--l-menu-selected-bg-color);
   color: var(--l-menu-selected-text-color);
-  border-radius: var(--l-menu-border-radius);
 }
 
 .l-menu--horizontal .l-menu-item--selected::before {
@@ -214,7 +214,7 @@
 }
 
 .l-menu--collapsed .l-menu-item--selected:not(.l-menu-item--disabled) .l-menu-item__content {
-  background-color: var(--l-menu-selected-bg-color);
+  color: var(--l-menu-selected-text-color);
 }
 
 .l-menu--collapsed .l-submenu__content {
@@ -243,6 +243,7 @@
   list-style: none;
   cursor: pointer;
   overflow: hidden;
+  max-width: 100%;
 }
 
 .l-menu-item:last-child {
@@ -260,101 +261,52 @@
   border-radius: var(--l-menu-border-radius);
   transition: all var(--l-menu-transition-duration) var(--l-menu-transition-timing);
   z-index: 1;
+  max-width: 100%;
+  min-width: 0;
 }
 
-/* Hover 状态 - 排除已选中的菜单项 */
+/* Hover 状态 - 浅色背景 + 文字颜色变化 */
 .l-menu-item:hover:not(.l-menu-item--disabled):not(.l-menu-item--selected) .l-menu-item__content {
-  background-color: var(--l-menu-hover-bg-color);
   color: var(--l-menu-hover-text-color);
+  background-color: var(--l-menu-hover-bg-color);
 }
 
-/* Active（按下）状态 */
+/* Active（按下）状态 - 微妙缩放反馈 */
 .l-menu-item:active:not(.l-menu-item--disabled) .l-menu-item__content {
-  background-color: var(--l-menu-active-bg-color);
   transform: scale(0.98);
+  background-color: var(--l-menu-active-bg-color);
 }
 
-/* Selected 状态 */
+/* Selected 状态 - 浅色主题背景 + 主题色文字 */
 .l-menu-item--selected:not(.l-menu-item--disabled) .l-menu-item__content {
   color: var(--l-menu-selected-text-color);
   background-color: var(--l-menu-selected-bg-color);
+  font-weight: var(--l-menu-font-weight-selected);
 }
 
 /* ========================
-   选中指示器
+   选中指示器（默认隐藏）
    ======================== */
 
-/* 左侧指示器（默认） */
+/* 左侧指示器 */
 .l-menu--indicator-left .l-menu-item--selected:not(.l-menu-item--disabled)::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 50%;
-  transform: translateY(-50%);
-  width: var(--l-menu-indicator-width);
-  height: 20px;
-  background: var(--l-menu-selected-indicator-color);
-  border-radius: 0 4px 4px 0;
-  animation: l-menu-indicator-slide-in-left 0.25s var(--l-menu-transition-timing-spring);
+  display: none;
 }
 
 /* 右侧指示器 */
 .l-menu--indicator-right .l-menu-item--selected:not(.l-menu-item--disabled)::before {
-  content: '';
-  position: absolute;
-  right: 0;
-  left: auto;
-  top: 50%;
-  transform: translateY(-50%);
-  width: var(--l-menu-indicator-width);
-  height: 20px;
-  background: var(--l-menu-selected-indicator-color);
-  border-radius: 4px 0 0 4px;
-  animation: l-menu-indicator-slide-in-left 0.25s var(--l-menu-transition-timing-spring);
+  display: none;
 }
 
 /* 底部指示器（水平模式） */
 .l-menu--indicator-bottom .l-menu-item--selected:not(.l-menu-item--disabled)::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: calc(100% - 32px);
-  height: var(--l-menu-indicator-height-horizontal, 2px);
-  background: var(--l-menu-selected-indicator-color);
-  border-radius: 2px 2px 0 0;
-  animation: l-menu-indicator-expand-bottom 0.25s var(--l-menu-transition-timing-spring);
+  display: none;
 }
 
 /* 无指示器 */
 .l-menu--indicator-none .l-menu-item--selected::before,
 .l-menu--indicator-none .l-menu-item--selected::after {
   display: none;
-}
-
-@keyframes l-menu-indicator-slide-in-left {
-  from {
-    transform: translateY(-50%) scaleY(0);
-    opacity: 0;
-  }
-
-  to {
-    transform: translateY(-50%) scaleY(1);
-    opacity: 1;
-  }
-}
-
-@keyframes l-menu-indicator-expand-bottom {
-  from {
-    transform: translateX(-50%) scaleX(0);
-    opacity: 0;
-  }
-
-  to {
-    transform: translateX(-50%) scaleX(1);
-    opacity: 1;
-  }
 }
 
 /* Disabled 状态 */
@@ -370,7 +322,7 @@
 }
 
 .l-menu-item--danger:not(.l-menu-item--disabled):hover .l-menu-item__content {
-  background-color: var(--l-menu-danger-bg-color);
+  color: var(--l-menu-danger-hover-color, #ff7875);
 }
 
 /* ========================
@@ -386,7 +338,8 @@
   margin-right: var(--l-menu-icon-margin-right);
   font-size: var(--l-menu-icon-size);
   flex-shrink: 0;
-  color: var(--l-menu-text-color-secondary);
+  color: inherit;
+  opacity: 0.75;
   transition: all var(--l-menu-transition-duration) var(--l-menu-transition-timing);
 }
 
@@ -396,6 +349,7 @@
 .l-submenu--open>.l-submenu__title .l-submenu__icon,
 .l-submenu--active .l-submenu__icon {
   color: inherit;
+  opacity: 1;
 }
 
 .l-menu-item__icon-component,
@@ -421,7 +375,8 @@
 .l-menu-item__suffix {
   margin-left: 8px;
   flex-shrink: 0;
-  color: var(--l-menu-text-color-secondary);
+  color: inherit;
+  opacity: 0.65;
   font-size: 12px;
 }
 
@@ -434,6 +389,7 @@
   padding: 0;
   list-style: none;
   overflow: visible;
+  max-width: 100%;
 }
 
 .l-submenu:last-child {
@@ -450,28 +406,31 @@
   border-radius: var(--l-menu-border-radius);
   transition: all var(--l-menu-transition-duration) var(--l-menu-transition-timing);
   z-index: 1;
+  max-width: 100%;
+  min-width: 0;
 }
 
-/* Hover 状态 */
+/* Hover 状态 - 浅色背景 + 文字颜色变化 */
 .l-submenu:hover:not(.l-submenu--disabled)>.l-submenu__title {
-  background-color: var(--l-menu-hover-bg-color);
   color: var(--l-menu-hover-text-color);
+  background-color: var(--l-menu-hover-bg-color);
 }
 
-/* Active 状态 */
+/* Active 状态 - 有子菜单被选中 */
 .l-submenu--active:not(.l-submenu--disabled)>.l-submenu__title {
-  color: var(--l-menu-active-text-color);
+  color: var(--l-menu-selected-text-color);
 }
 
-/* Open 状态 - 仅内联模式显示背景 */
+/* Open 状态 - 展开时浅色背景 */
 .l-submenu--open:not(.l-submenu--disabled):not(.l-submenu--popup)>.l-submenu__title {
   color: var(--l-menu-selected-text-color);
   background-color: var(--l-menu-hover-bg-color);
 }
 
-/* Popup 模式下展开时只改变文字颜色，不显示背景 */
+/* Popup 模式下展开时 */
 .l-submenu--open.l-submenu--popup:not(.l-submenu--disabled)>.l-submenu__title {
   color: var(--l-menu-selected-text-color);
+  background-color: var(--l-menu-hover-bg-color);
 }
 
 /* Disabled 状态 */
@@ -492,8 +451,9 @@
   height: 20px;
   margin-left: auto;
   padding-left: 8px;
-  color: var(--l-menu-text-color-secondary);
-  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  color: inherit;
+  opacity: 0.65;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.2s ease;
   flex-shrink: 0;
 }
 
@@ -504,11 +464,13 @@
 }
 
 .l-submenu--open:not(.l-submenu--popup)>.l-submenu__title .l-submenu__arrow {
-  color: var(--l-menu-selected-text-color);
+  color: inherit;
+  opacity: 1;
 }
 
 .l-submenu:hover:not(.l-submenu--disabled)>.l-submenu__title .l-submenu__arrow {
-  color: var(--l-menu-hover-text-color);
+  color: inherit;
+  opacity: 1;
 }
 
 .l-submenu__arrow-icon {
@@ -528,6 +490,7 @@
   padding: 0 0 0 12px;
   list-style: none;
   overflow: hidden;
+  max-width: 100%;
   transition:
     height 0.25s cubic-bezier(0.4, 0, 0.2, 1),
     opacity 0.2s ease;
@@ -621,18 +584,18 @@
   display: none;
 }
 
-/* 弹出菜单内的hover效果 - 与一级菜单区分 */
+/* 弹出菜单内的hover效果 */
 .l-submenu__popup .l-menu-item:hover:not(.l-menu-item--disabled) .l-menu-item__content,
 .l-submenu__popup .l-submenu:hover:not(.l-submenu--disabled)>.l-submenu__title {
   background-color: var(--l-menu-hover-bg-color);
   color: var(--l-menu-hover-text-color);
-  border-radius: var(--l-menu-border-radius-small, 6px);
 }
 
 /* 弹出菜单内选中项的样式 */
 .l-submenu__popup .l-menu-item--selected:not(.l-menu-item--disabled) .l-menu-item__content {
-  background-color: var(--l-menu-selected-bg-color);
   color: var(--l-menu-selected-text-color);
+  background-color: var(--l-menu-selected-bg-color);
+  font-weight: var(--l-menu-font-weight-selected);
 }
 
 /* 弹出方向：右侧 */
@@ -771,6 +734,104 @@
     transition-duration: 0.01ms !important;
     animation-duration: 0.01ms !important;
   }
+}
+
+/* ========================
+   徽标样式
+   ======================== */
+.l-menu-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-left: auto;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1;
+  white-space: nowrap;
+  border-radius: 10px;
+  transition: all var(--l-menu-transition-duration) var(--l-menu-transition-timing);
+}
+
+/* 红点徽标 */
+.l-menu-badge--dot {
+  width: 8px;
+  height: 8px;
+  min-width: 8px;
+  padding: 0;
+  border-radius: 50%;
+}
+
+/* 数字徽标 */
+.l-menu-badge--count {
+  min-width: 18px;
+  height: 18px;
+  padding: 0 6px;
+  font-size: 11px;
+}
+
+/* 文本徽标 */
+.l-menu-badge--text {
+  padding: 2px 6px;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* 徽标状态颜色 */
+.l-menu-badge--error {
+  background-color: #ff4d4f;
+  color: #fff;
+}
+
+.l-menu-badge--success {
+  background-color: #52c41a;
+  color: #fff;
+}
+
+.l-menu-badge--warning {
+  background-color: #faad14;
+  color: #fff;
+}
+
+.l-menu-badge--default {
+  background-color: var(--l-menu-primary-color);
+  color: #fff;
+}
+
+/* 深色主题下的徽标 */
+.l-menu--dark .l-menu-badge--default {
+  background-color: rgba(22, 119, 255, 0.8);
+}
+
+/* 折叠模式下的徽标 */
+.l-menu--collapsed .l-menu-badge {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  transform: scale(0.85);
+}
+
+.l-menu--collapsed .l-menu-badge--dot {
+  top: 10px;
+  right: 10px;
+}
+
+/* ========================
+   搜索高亮样式
+   ======================== */
+.l-menu-highlight {
+  background: linear-gradient(120deg, rgba(22, 119, 255, 0.2) 0%, rgba(22, 119, 255, 0.15) 100%);
+  color: var(--l-menu-primary-color);
+  font-weight: 600;
+  padding: 0 2px;
+  border-radius: 2px;
+}
+
+.l-menu--dark .l-menu-highlight,
+[data-theme-mode="dark"] .l-menu-highlight {
+  background: linear-gradient(120deg, rgba(64, 150, 255, 0.3) 0%, rgba(64, 150, 255, 0.2) 100%);
+  color: #4096ff;
 }
 
 /* 溢出折叠样式已移至 @ldesign/menu-core/src/styles/overflow.css */

@@ -6,6 +6,9 @@
 
 import { EventEmitter } from '../utils'
 
+/** 检查是否为浏览器环境 */
+const isBrowser = typeof window !== 'undefined' && typeof document !== 'undefined'
+
 /**
  * 溢出管理器事件
  */
@@ -49,35 +52,86 @@ export interface OverflowManagerConfig {
    * @default 50
    */
   debounceDelay?: number
+
+  /**
+   * 是否启用
+   * @default true
+   */
+  enabled?: boolean
 }
 
 /**
  * 水平菜单溢出管理器
  * 自动检测菜单项是否超出容器宽度，并生成溢出菜单的HTML
+ *
+ * @example
+ * ```ts
+ * const manager = new OverflowManager({
+ *   container: menuElement,
+ *   listElement: menuListElement,
+ * })
+ *
+ * manager.on('overflowChange', (data) => {
+ *   console.log('Overflow changed:', data)
+ * })
+ * ```
  */
 export class OverflowManager {
-  private config: Required<OverflowManagerConfig>
+  private config: Required<Omit<OverflowManagerConfig, 'container' | 'listElement'>> & {
+    container: HTMLElement | null
+    listElement: HTMLElement | null
+  }
   private emitter = new EventEmitter<OverflowEventMap>()
   private resizeObserver: ResizeObserver | null = null
   private lastContainerWidth = 0
   private isCalculating = false
   private calcDebounceTimer: ReturnType<typeof setTimeout> | null = null
+  private rafId: number | null = null
   private isPaused = false
+  private isDestroyed = false
 
   // 当前状态
   private _visibleCount = -1
   private _overflowItemsHtml = ''
 
+  /**
+   * 创建溢出管理器
+   * @param config - 配置项
+   */
   constructor(config: OverflowManagerConfig) {
+    // SSR 兼容性检查
+    if (!isBrowser) {
+      this.config = {
+        container: null,
+        listElement: null,
+        moreButtonWidth: 80,
+        widthThreshold: 5,
+        debounceDelay: 50,
+        enabled: false,
+      }
+      return
+    }
+
+    // 参数验证
+    if (!config.container || !(config.container instanceof HTMLElement)) {
+      console.warn('[LMenu] OverflowManager: container 必须是有效的 HTMLElement')
+    }
+    if (!config.listElement || !(config.listElement instanceof HTMLElement)) {
+      console.warn('[LMenu] OverflowManager: listElement 必须是有效的 HTMLElement')
+    }
+
     this.config = {
       container: config.container,
       listElement: config.listElement,
       moreButtonWidth: config.moreButtonWidth ?? 80,
       widthThreshold: config.widthThreshold ?? 5,
       debounceDelay: config.debounceDelay ?? 50,
+      enabled: config.enabled ?? true,
     }
 
-    this.init()
+    if (this.config.enabled) {
+      this.init()
+    }
   }
 
   /**
@@ -105,9 +159,12 @@ export class OverflowManager {
    * 初始化
    */
   private init(): void {
+    if (!isBrowser || this.isDestroyed) return
+
     this.setupResizeObserver()
     // 延迟初始计算，等待DOM渲染完成
-    requestAnimationFrame(() => {
+    this.rafId = requestAnimationFrame(() => {
+      if (this.isDestroyed || !this.config.container) return
       this.lastContainerWidth = this.config.container.offsetWidth
       this.calculate()
     })
@@ -117,7 +174,17 @@ export class OverflowManager {
    * 设置 ResizeObserver
    */
   private setupResizeObserver(): void {
+    if (!isBrowser || !this.config.container) return
+
+    // 检查 ResizeObserver 是否可用
+    if (typeof ResizeObserver === 'undefined') {
+      console.warn('[LMenu] OverflowManager: ResizeObserver 不可用，溢出检测将不工作')
+      return
+    }
+
     this.resizeObserver = new ResizeObserver((entries) => {
+      if (this.isDestroyed) return
+
       const entry = entries[0]
       if (entry) {
         const newWidth = entry.contentRect.width
@@ -149,7 +216,7 @@ export class OverflowManager {
    * 触发计算（带防抖）
    */
   calculate(): void {
-    if (this.isPaused) return
+    if (this.isPaused || this.isDestroyed || !this.config.enabled) return
 
     if (this.calcDebounceTimer) {
       clearTimeout(this.calcDebounceTimer)
@@ -161,76 +228,93 @@ export class OverflowManager {
   }
 
   /**
+   * 立即执行计算（跳过防抖）
+   */
+  calculateNow(): void {
+    if (this.isPaused || this.isDestroyed || !this.config.enabled) return
+    this.doCalculate()
+  }
+
+  /**
    * 执行计算
    */
   private doCalculate(): void {
-    if (this.isCalculating || this.isPaused) return
+    if (this.isCalculating || this.isPaused || this.isDestroyed) return
+    if (!this.config.listElement || !this.config.container) return
+
     this.isCalculating = true
 
-    const { listElement, container, moreButtonWidth } = this.config
+    try {
+      const { listElement, container, moreButtonWidth } = this.config
 
-    const items = Array.from(listElement.children).filter(
-      (el) => !el.classList.contains('l-menu__more')
-    ) as HTMLElement[]
+      const items = Array.from(listElement.children).filter(
+        (el) => !el.classList.contains('l-menu__more')
+      ) as HTMLElement[]
 
-    if (items.length === 0) {
-      this._visibleCount = -1
-      this._overflowItemsHtml = ''
-      this.isCalculating = false
-      this.emitChange()
-      return
-    }
-
-    // 暂时移除隐藏标记来测量真实宽度
-    items.forEach(item => {
-      item.classList.remove('l-menu-item--hidden')
-    })
-
-    // 获取父容器的宽度作为可用空间
-    const parentElement = container.parentElement
-    const availableWidth = parentElement ? parentElement.clientWidth : container.clientWidth
-
-    let totalWidth = 0
-    let count = 0
-
-    for (const item of items) {
-      const itemWidth = item.offsetWidth
-      totalWidth += itemWidth
-      // 预留"更多"按钮的空间
-      if (totalWidth + moreButtonWidth > availableWidth && count < items.length - 1) {
-        break
+      if (items.length === 0) {
+        this._visibleCount = -1
+        this._overflowItemsHtml = ''
+        this.emitChange()
+        return
       }
-      count++
-    }
 
-    // 如果所有项目都能显示，则不需要"更多"按钮
-    if (count >= items.length) {
-      this._visibleCount = -1
-      this._overflowItemsHtml = ''
-      items.forEach(item => item.classList.remove('l-menu-item--hidden'))
-    } else {
-      const visibleNum = Math.max(1, count)
-      this._visibleCount = visibleNum
-
-      // 标记溢出的菜单项并保存HTML
-      const htmlParts: string[] = []
-      items.forEach((item, index) => {
-        if (index >= visibleNum) {
-          item.classList.add('l-menu-item--hidden')
-          // 克隆并清理HTML
-          const clone = item.cloneNode(true) as HTMLElement
-          clone.classList.remove('l-menu-item--hidden')
-          clone.classList.remove('l-submenu--open')
-          htmlParts.push(clone.outerHTML)
-        } else {
-          item.classList.remove('l-menu-item--hidden')
-        }
+      // 暂时移除隐藏标记来测量真实宽度
+      items.forEach(item => {
+        item.classList.remove('l-menu-item--hidden')
       })
-      this._overflowItemsHtml = htmlParts.join('')
-    }
 
-    this.isCalculating = false
-    this.emitChange()
+      // 获取父容器的宽度作为可用空间
+      const parentElement = container.parentElement
+      const availableWidth = parentElement ? parentElement.clientWidth : container.clientWidth
+
+      // 无效宽度时跳过计算
+      if (availableWidth <= 0) {
+        return
+      }
+
+      let totalWidth = 0
+      let count = 0
+
+      for (const item of items) {
+        const itemWidth = item.offsetWidth
+        totalWidth += itemWidth
+        // 预留"更多"按钮的空间
+        if (totalWidth + moreButtonWidth > availableWidth && count < items.length - 1) {
+          break
+        }
+        count++
+      }
+
+      // 如果所有项目都能显示，则不需要"更多"按钮
+      if (count >= items.length) {
+        this._visibleCount = -1
+        this._overflowItemsHtml = ''
+        items.forEach(item => item.classList.remove('l-menu-item--hidden'))
+      } else {
+        const visibleNum = Math.max(1, count)
+        this._visibleCount = visibleNum
+
+        // 标记溢出的菜单项并保存HTML
+        const htmlParts: string[] = []
+        items.forEach((item, index) => {
+          if (index >= visibleNum) {
+            item.classList.add('l-menu-item--hidden')
+            // 克隆并清理HTML
+            const clone = item.cloneNode(true) as HTMLElement
+            clone.classList.remove('l-menu-item--hidden')
+            clone.classList.remove('l-submenu--open')
+            htmlParts.push(clone.outerHTML)
+          } else {
+            item.classList.remove('l-menu-item--hidden')
+          }
+        })
+        this._overflowItemsHtml = htmlParts.join('')
+      }
+
+      this.emitChange()
+    } finally {
+      this.isCalculating = false
+    }
   }
 
   /**
@@ -268,17 +352,51 @@ export class OverflowManager {
   }
 
   /**
+   * 重置状态
+   */
+  reset(): void {
+    this._visibleCount = -1
+    this._overflowItemsHtml = ''
+    this.emitChange()
+  }
+
+  /**
+   * 更新配置
+   */
+  updateConfig(config: Partial<Pick<OverflowManagerConfig, 'moreButtonWidth' | 'widthThreshold' | 'debounceDelay'>>): void {
+    if (config.moreButtonWidth !== undefined) {
+      this.config.moreButtonWidth = config.moreButtonWidth
+    }
+    if (config.widthThreshold !== undefined) {
+      this.config.widthThreshold = config.widthThreshold
+    }
+    if (config.debounceDelay !== undefined) {
+      this.config.debounceDelay = config.debounceDelay
+    }
+  }
+
+  /**
    * 销毁管理器
    */
   destroy(): void {
+    if (this.isDestroyed) return
+    this.isDestroyed = true
+
     if (this.resizeObserver) {
       this.resizeObserver.disconnect()
       this.resizeObserver = null
     }
     if (this.calcDebounceTimer) {
       clearTimeout(this.calcDebounceTimer)
+      this.calcDebounceTimer = null
     }
-    this.emitter.off('overflowChange')
+    if (this.rafId) {
+      cancelAnimationFrame(this.rafId)
+      this.rafId = null
+    }
+    this.emitter.clear()
+    this.config.container = null
+    this.config.listElement = null
   }
 }
 

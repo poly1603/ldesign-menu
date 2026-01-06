@@ -12,9 +12,12 @@ export * from './composables'
 
 // 重新导出类型和工具函数（排除与组件名冲突的类型）
 export type {
+  BadgeStatus,
+  BadgeType,
   ExpandMode,
   FlatMenuItem,
   IndicatorPosition,
+  MenuBadge,
   MenuConfig,
   MenuDividerItem,
   MenuEventHandler,
@@ -32,6 +35,8 @@ export type {
   MenuMode,
   MenuOpenChangeEventParams,
   MenuOverflowEventParams,
+  MenuSearchConfig,
+  MenuSearchResult,
   MenuSelectEventParams,
   MenuSize,
   MenuState,
@@ -46,16 +51,20 @@ export {
   DEFAULT_MENU_STATE,
   EventEmitter,
   filterMenuItems,
+  filterMenuItemsBySearch,
   findItemByKey,
   flattenItems,
+  getExpandKeysForSearch,
   getItemKey,
   getItemPath,
   getParentKeys,
   hasChildren,
+  highlightKeyword,
   isDisabled,
   isDivider,
   isGroup,
   isHidden,
   MenuManager,
+  searchMenuItems,
 } from './types'
 

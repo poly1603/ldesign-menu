@@ -15,6 +15,47 @@ import { DEFAULT_MENU_CONFIG, DEFAULT_MENU_STATE } from '../types'
 import { EventEmitter, findItemByKey, getItemPath, getParentKeys, hasChildren } from '../utils'
 import { filterMenuItems } from './menu-filter'
 
+/** 内部警告前缀 */
+const WARN_PREFIX = '[LMenu]'
+
+/**
+ * 安全打印警告（仅开发环境）
+ */
+function warn(message: string): void {
+  if (typeof process !== 'undefined' && process.env?.NODE_ENV !== 'production') {
+    console.warn(`${WARN_PREFIX} ${message}`)
+  }
+}
+
+/**
+ * 验证菜单项数据
+ */
+function validateItems(items: MenuItem[]): void {
+  if (!Array.isArray(items)) {
+    warn('items 必须是数组')
+    return
+  }
+
+  const keys = new Set<string>()
+
+  function checkDuplicateKeys(menuItems: MenuItem[]): void {
+    for (const item of menuItems) {
+      if ('key' in item && item.key) {
+        if (keys.has(item.key)) {
+          warn(`发现重复的 key: "${item.key}"，这可能导致意外行为`)
+        }
+        keys.add(item.key)
+      }
+
+      if ('children' in item && Array.isArray(item.children)) {
+        checkDuplicateKeys(item.children)
+      }
+    }
+  }
+
+  checkDuplicateKeys(items)
+}
+
 /**
  * 菜单管理器配置
  */
@@ -61,9 +102,18 @@ export class MenuManager {
   /**
    * 创建菜单管理器
    * @param config - 菜单配置
+   * @throws 如果 items 不是数组会抛出错误
    */
   constructor(config: MenuManagerConfig) {
-    const { items, defaultSelectedKey, defaultOpenKeys, filterConfig, ...rest } = config
+    const { items = [], defaultSelectedKey, defaultOpenKeys = [], filterConfig, ...rest } = config
+
+    // 参数验证
+    if (!Array.isArray(items)) {
+      throw new Error(`${WARN_PREFIX} items 必须是数组`)
+    }
+
+    // 开发环境验证
+    validateItems(items)
 
     // 合并默认配置
     this.config = {
@@ -80,10 +130,18 @@ export class MenuManager {
     this.state = {
       ...DEFAULT_MENU_STATE,
       selectedKey: defaultSelectedKey,
-      openKeys: defaultOpenKeys || [],
+      openKeys: Array.isArray(defaultOpenKeys) ? [...defaultOpenKeys] : [],
       activePath: defaultSelectedKey
         ? getParentKeys(this.filteredItems, defaultSelectedKey)
         : [],
+    }
+
+    // 验证默认选中项是否存在
+    if (defaultSelectedKey) {
+      const item = findItemByKey(this.filteredItems, defaultSelectedKey)
+      if (!item) {
+        warn(`defaultSelectedKey "${defaultSelectedKey}" 不存在于菜单项中`)
+      }
     }
 
     // 如果有默认选中项，确保其父级展开（初始化时强制展开）
@@ -314,6 +372,13 @@ export class MenuManager {
    * @param items - 新的菜单数据
    */
   updateItems(items: MenuItem[]): void {
+    if (!Array.isArray(items)) {
+      warn('updateItems: items 必须是数组')
+      return
+    }
+
+    validateItems(items)
+
     this.rawItems = items
     this.filteredItems = filterMenuItems(items, this.filterConfig)
 

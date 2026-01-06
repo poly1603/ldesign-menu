@@ -4,8 +4,8 @@
  */
 
 export { EventEmitter } from './event-emitter'
-
 export type { EventHandler } from './event-emitter'
+
 export {
   findItemByKey,
   flattenItems,
@@ -18,4 +18,15 @@ export {
   isGroup,
   isHidden,
 } from './menu-utils'
+
+export {
+  filterMenuItemsBySearch,
+  getExpandKeysForSearch,
+  highlightKeyword,
+  searchMenuItems,
+} from './menu-search'
+export type {
+  MenuSearchConfig,
+  MenuSearchResult,
+} from './menu-search'
 
