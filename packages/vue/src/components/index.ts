@@ -8,6 +8,7 @@ import MenuDivider from './MenuDivider.vue'
 import MenuGroup from './MenuGroup.vue'
 import MenuItem from './MenuItem.vue'
 import MenuTooltip from './MenuTooltip.vue'
+import MenuTree from './MenuTree.vue'
 import SubMenu from './SubMenu.vue'
 
 export {
@@ -16,17 +17,19 @@ export {
   MenuGroup as LMenuGroup,
   MenuItem as LMenuItem,
   MenuTooltip as LMenuTooltip,
+  MenuTree as LMenuTree,
   SubMenu as LSubMenu,
   Menu,
   MenuDivider,
   MenuGroup,
   MenuItem,
   MenuTooltip,
+  MenuTree,
   SubMenu,
 }
 
 // 类型需要从单独的文件导出
-export type { MenuProps } from './types'
+export type { MenuProps, MenuRenderMode } from './types'
 export type { MenuItemProps } from './types'
 export type { SubMenuProps } from './types'
 export type { MenuGroupProps } from './types'

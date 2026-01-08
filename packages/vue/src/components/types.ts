@@ -11,6 +11,14 @@ import type {
 } from '../types'
 
 /**
+ * 渲染模式
+ * - `full`: 完整渲染所有菜单项
+ * - `rootOnly`: 只渲染一级菜单项（用于 Mix 布局顶部导航）
+ * - `childrenOf`: 只渲染指定 parentKey 的子菜单（用于 Mix 布局侧边栏）
+ */
+export type MenuRenderMode = 'full' | 'rootOnly' | 'childrenOf'
+
+/**
  * 菜单组件属性
  */
 export interface MenuProps {
@@ -86,6 +94,23 @@ export interface MenuProps {
    * 默认展开的菜单项 key 列表
    */
   defaultOpenKeys?: string[]
+
+  /**
+   * 渲染模式
+   * @default 'full'
+   */
+  renderMode?: MenuRenderMode
+
+  /**
+   * 父级菜单 key，配合 renderMode='childrenOf' 使用
+   */
+  parentKey?: string
+
+  /**
+   * 是否继承父容器颜色
+   * @default true
+   */
+  inheritColor?: boolean
 }
 
 /**

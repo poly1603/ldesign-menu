@@ -54,13 +54,15 @@
   align-items: stretch;
   height: var(--l-menu-item-height-large);
   background: transparent;
+  width: auto;
 }
 
 .l-menu--horizontal .l-menu__list {
   display: flex;
   align-items: stretch;
-  padding: 0 4px;
-  gap: 4px;
+  padding: 0;
+  gap: 2px;
+  flex-wrap: nowrap;
 }
 
 .l-menu--horizontal .l-menu-item,
@@ -68,49 +70,54 @@
   margin: 0;
   display: flex;
   align-items: stretch;
+  flex-shrink: 0;
 }
 
 .l-menu--horizontal .l-menu-item__content,
 .l-menu--horizontal .l-submenu__title {
-  height: auto;
+  height: 100%;
   padding: 0 16px;
   margin: 0;
   display: flex;
   align-items: center;
-  border-radius: 0;
+  border-radius: 6px;
   position: relative;
   font-weight: 500;
+  transition: all 0.2s ease;
+  white-space: nowrap;
 }
 
-/* 水平模式下划线指示器 - 已禁用，改用背景色hover效果 */
-.l-menu--horizontal .l-menu-item__content::after,
-.l-menu--horizontal .l-submenu__title::after {
-  display: none;
-}
-
-/* 水平模式 hover 效果 - 仅文字颜色变化 */
+/* 水平模式 hover 效果 - 微妙背景 + 文字颜色变化 */
 .l-menu--horizontal .l-menu-item:hover:not(.l-menu-item--disabled) .l-menu-item__content,
 .l-menu--horizontal .l-submenu:hover:not(.l-submenu--disabled)>.l-submenu__title {
   color: var(--l-menu-hover-text-color);
+  background-color: var(--l-menu-hover-bg-color);
 }
 
-/* 水平模式选中效果 - 仅文字颜色和字重变化 */
+/* 水平模式选中效果 */
 .l-menu--horizontal .l-menu-item--selected:not(.l-menu-item--disabled) .l-menu-item__content {
   color: var(--l-menu-selected-text-color);
   font-weight: var(--l-menu-font-weight-selected);
+  background-color: var(--l-menu-selected-bg-color);
 }
 
-/* 水平模式子菜单激活效果 - 仅文字颜色变化 */
+/* 水平模式子菜单激活效果 */
 .l-menu--horizontal .l-submenu--active:not(.l-submenu--disabled)>.l-submenu__title,
 .l-menu--horizontal .l-submenu--open:not(.l-submenu--disabled)>.l-submenu__title {
   color: var(--l-menu-selected-text-color);
+  background-color: var(--l-menu-hover-bg-color);
 }
 
 .l-menu--horizontal .l-menu-item--selected::before {
   display: none;
 }
 
-/* 水平模式箭头旋转 - 应用在图标上以保持正确的旋转中心 */
+/* 水平模式箭头 */
+.l-menu--horizontal .l-submenu__arrow {
+  margin-left: 4px;
+  padding-left: 0;
+}
+
 .l-menu--horizontal .l-submenu--open>.l-submenu__title .l-submenu__arrow-icon {
   transform: rotate(180deg);
   transform-origin: center;
@@ -120,29 +127,29 @@
 .l-menu--horizontal .l-submenu--level-0>.l-submenu__popup {
   top: 100%;
   left: 0;
-  margin-top: 8px;
+  margin-top: 4px;
   margin-left: 0;
+  min-width: 180px;
 }
 
 /* 水平模式弹出位置 - 二级及以上子菜单向右展开 */
 .l-menu--horizontal .l-submenu__popup .l-submenu>.l-submenu__popup {
-  top: -6px;
+  top: -4px;
   left: 100%;
   margin-top: 0;
-  margin-left: 8px;
+  margin-left: 4px;
 }
 
 /* 水平模式下嵌套子菜单箭头方向 - 向右 */
 .l-menu--horizontal .l-submenu__popup .l-submenu .l-submenu__arrow-icon {
-  transform: rotate(0deg) !important;
+  transform: rotate(-90deg) !important;
 }
 
-/* 水平模式下嵌套子菜单展开时箭头不旋转（保持向右） */
 .l-menu--horizontal .l-submenu__popup .l-submenu--open .l-submenu__arrow-icon {
-  transform: rotate(0deg) !important;
+  transform: rotate(-90deg) !important;
 }
 
-/* 水平模式下嵌套子菜单需要正确的z-index层级 */
+/* 水平模式下嵌套子菜单 z-index */
 .l-menu--horizontal .l-submenu__popup .l-submenu {
   position: relative;
 }
@@ -153,6 +160,16 @@
 
 .l-menu--horizontal .l-submenu__popup .l-submenu__popup .l-submenu__popup {
   z-index: 1052;
+}
+
+/* 水平模式弹出菜单样式优化 */
+.l-menu--horizontal .l-submenu__popup {
+  background: var(--l-menu-popup-bg, #ffffff);
+  border-radius: 8px;
+  box-shadow: 0 6px 16px 0 rgba(0, 0, 0, 0.08),
+              0 3px 6px -4px rgba(0, 0, 0, 0.12),
+              0 9px 28px 8px rgba(0, 0, 0, 0.05);
+  padding: 4px;
 }
 
 /* ========================
@@ -166,8 +183,8 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 8px 4px;
-  gap: 4px;
+  padding: 8px 6px;
+  gap: 2px;
 }
 
 .l-menu--collapsed .l-menu-item,
@@ -198,22 +215,37 @@
   width: 48px;
   height: 48px;
   margin: 0 auto;
-  border-radius: var(--l-menu-border-radius);
+  border-radius: 10px;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* 折叠模式 hover 效果 */
+.l-menu--collapsed .l-menu-item:hover:not(.l-menu-item--disabled) .l-menu-item__content,
+.l-menu--collapsed .l-submenu:hover:not(.l-submenu--disabled) > .l-submenu__title {
+  background-color: var(--l-menu-hover-bg-color);
+  transform: scale(1.05);
 }
 
 .l-menu--collapsed .l-menu-item__icon,
 .l-menu--collapsed .l-submenu__icon {
   margin-right: 0 !important;
-  font-size: 20px;
-  width: 20px;
-  height: 20px;
+  font-size: 22px;
+  width: 22px;
+  height: 22px;
+  transition: transform 0.2s ease;
 }
 
+/* 折叠模式选中状态 */
 .l-menu--collapsed .l-menu-item--selected::before {
   display: none;
 }
 
 .l-menu--collapsed .l-menu-item--selected:not(.l-menu-item--disabled) .l-menu-item__content {
+  color: var(--l-menu-selected-text-color);
+  background-color: var(--l-menu-selected-bg-color);
+}
+
+.l-menu--collapsed .l-submenu--active > .l-submenu__title {
   color: var(--l-menu-selected-text-color);
 }
 
@@ -230,7 +262,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 4px;
+  gap: 2px;
 }
 
 /* ========================
@@ -707,7 +739,9 @@
 /* ========================
    响应式适配
    ======================== */
-@media (max-width: 768px) {
+
+/* 平板适配 (768px - 1024px) */
+@media (min-width: 768px) and (max-width: 1024px) {
   .l-menu--horizontal {
     height: var(--l-menu-item-height);
   }
@@ -715,6 +749,87 @@
   .l-menu--horizontal .l-menu-item__content,
   .l-menu--horizontal .l-submenu__title {
     padding: 0 12px;
+    font-size: 13px;
+  }
+
+  /* 平板下垂直菜单稍微紧凑 */
+  .l-menu--vertical .l-menu-item__content,
+  .l-menu--vertical .l-submenu__title {
+    height: 38px;
+  }
+
+  /* 平板下折叠菜单尺寸 */
+  .l-menu--collapsed .l-menu-item__content,
+  .l-menu--collapsed .l-submenu__title {
+    width: 44px;
+    height: 44px;
+  }
+}
+
+/* 手机适配 (< 768px) */
+@media (max-width: 767px) {
+  .l-menu--horizontal {
+    height: var(--l-menu-item-height-small);
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .l-menu--horizontal .l-menu__list {
+    gap: 0;
+  }
+
+  .l-menu--horizontal .l-menu-item__content,
+  .l-menu--horizontal .l-submenu__title {
+    padding: 0 10px;
+    font-size: 13px;
+    border-radius: 4px;
+  }
+
+  /* 手机下垂直菜单全宽 */
+  .l-menu--vertical {
+    width: 100% !important;
+  }
+
+  .l-menu--vertical .l-menu-item__content,
+  .l-menu--vertical .l-submenu__title {
+    height: 44px;
+    padding: 0 16px;
+  }
+
+  /* 手机下触摸热区更大 */
+  .l-menu--vertical .l-menu-item,
+  .l-menu--vertical .l-submenu {
+    margin-bottom: 4px;
+  }
+
+  /* 手机下弹出菜单全屏 */
+  .l-submenu__popup {
+    position: fixed !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    top: auto !important;
+    margin: 0 !important;
+    border-radius: 16px 16px 0 0 !important;
+    max-height: 60vh;
+    overflow-y: auto;
+  }
+
+  /* 手机下隐藏折叠模式 */
+  .l-menu--collapsed {
+    width: 100% !important;
+  }
+
+  .l-menu--collapsed .l-menu__list {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    padding: 12px;
+  }
+
+  .l-menu--collapsed .l-menu-item,
+  .l-menu--collapsed .l-submenu {
+    width: auto;
   }
 }
 

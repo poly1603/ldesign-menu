@@ -117,10 +117,10 @@ export interface MenuConfig {
   collapsedWidth?: number
 
   /**
-   * 展开宽度（px）
+   * 展开宽度（px或字符串）
    * @default 240
    */
-  expandedWidth?: number
+  expandedWidth?: number | string
 
   /**
    * 子级缩进（px）

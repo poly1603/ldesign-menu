@@ -197,14 +197,14 @@ export function useMenuState(options: UseMenuStateOptions): UseMenuStateReturn {
   const openKeys = ref<string[]>(manager.getOpenKeys())
   const collapsed = ref(config.collapsed ?? false)
 
-  // 监听数据变化
+  // 监听数据变化 - 添加 immediate: true 确保初始值被处理
   watch(itemsRef, (newItems) => {
     manager.updateItems(newItems)
     items.value = manager.getItems()
     state.value = manager.getState()
     selectedKey.value = manager.getSelectedKey()
     openKeys.value = manager.getOpenKeys()
-  })
+  }, { immediate: true })
 
   // 监听过滤配置变化
   watch(filterConfigRef, (newConfig) => {

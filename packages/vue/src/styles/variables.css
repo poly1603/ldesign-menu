@@ -8,36 +8,34 @@
   --l-menu-primary-color: var(--color-primary-default, #1677ff);
   --l-menu-primary-color-hover: var(--color-primary-hover, #4096ff);
   --l-menu-primary-color-active: var(--color-primary-active, #0958d9);
-  --l-menu-primary-bg: transparent;
-  --l-menu-primary-bg-hover: transparent;
 
   /* ========== 颜色系统 ========== */
-  /* 基础颜色 - 继承父容器颜色 */
+  /* 基础颜色 - 默认透明背景，继承父容器颜色 */
   --l-menu-bg-color: transparent;
   --l-menu-text-color: inherit;
   --l-menu-text-color-secondary: inherit;
   --l-menu-text-color-tertiary: inherit;
-  --l-menu-text-color-disabled: var(--color-text-disabled, rgba(128, 128, 128, 0.5));
-  --l-menu-border-color: var(--color-border, rgba(128, 128, 128, 0.2));
+  --l-menu-text-color-disabled: rgba(128, 128, 128, 0.45);
+  --l-menu-border-color: rgba(128, 128, 128, 0.15);
 
-  /* Hover 状态 - 浅色背景 */
-  --l-menu-hover-bg-color: var(--color-fill-secondary, rgba(0, 0, 0, 0.04));
+  /* Hover 状态 - 微妙的背景色变化 */
+  --l-menu-hover-bg-color: rgba(128, 128, 128, 0.08);
   --l-menu-hover-text-color: inherit;
 
   /* Active 状态 - 按下时稍深 */
-  --l-menu-active-bg-color: var(--color-fill-tertiary, rgba(0, 0, 0, 0.06));
+  --l-menu-active-bg-color: rgba(128, 128, 128, 0.12);
   --l-menu-active-text-color: var(--l-menu-primary-color);
 
-  /* Selected 状态 - 浅色主题背景 */
-  --l-menu-selected-bg-color: var(--color-primary-100, rgba(var(--color-primary-rgb, 22, 119, 255), 0.1));
-  --l-menu-selected-text-color: var(--color-primary-default, #1677ff);
-  --l-menu-selected-indicator-color: var(--color-primary-default, #1677ff);
+  /* Selected 状态 - 使用主题色 */
+  --l-menu-selected-bg-color: rgba(var(--color-primary-rgb, 22, 119, 255), 0.1);
+  --l-menu-selected-text-color: var(--l-menu-primary-color);
+  --l-menu-selected-indicator-color: var(--l-menu-primary-color);
 
   /* Focus 状态 */
   --l-menu-focus-shadow: none;
 
   /* 分组标题 */
-  --l-menu-group-title-color: var(--l-menu-text-color-tertiary);
+  --l-menu-group-title-color: inherit;
 
   /* ========== 尺寸系统（小尺寸） ========== */
   --l-menu-item-height-small: 32px;
@@ -135,43 +133,59 @@
 
 /* ========== 浅色主题 ========== */
 .l-menu--light {
-  --l-menu-bg-color: transparent;
   --l-menu-text-color: rgba(0, 0, 0, 0.88);
   --l-menu-text-color-secondary: rgba(0, 0, 0, 0.65);
   --l-menu-text-color-tertiary: rgba(0, 0, 0, 0.45);
   --l-menu-text-color-disabled: rgba(0, 0, 0, 0.25);
   --l-menu-hover-bg-color: rgba(0, 0, 0, 0.04);
-  --l-menu-hover-text-color: rgba(0, 0, 0, 1);
+  --l-menu-hover-text-color: rgba(0, 0, 0, 0.95);
   --l-menu-active-bg-color: rgba(0, 0, 0, 0.06);
-  --l-menu-selected-bg-color: var(--color-primary-100, rgba(var(--color-primary-rgb, 22, 119, 255), 0.1));
+  --l-menu-selected-bg-color: rgba(var(--color-primary-rgb, 22, 119, 255), 0.1);
   --l-menu-selected-text-color: var(--l-menu-primary-color);
   --l-menu-selected-indicator-color: var(--l-menu-primary-color);
+  --l-menu-popup-bg: #ffffff;
 }
 
 /* ========== 深色主题 ========== */
 .l-menu--dark {
-  --l-menu-bg-color: transparent;
   --l-menu-text-color: rgba(255, 255, 255, 0.85);
   --l-menu-text-color-secondary: rgba(255, 255, 255, 0.65);
   --l-menu-text-color-tertiary: rgba(255, 255, 255, 0.45);
   --l-menu-text-color-disabled: rgba(255, 255, 255, 0.25);
   --l-menu-border-color: rgba(255, 255, 255, 0.08);
   --l-menu-hover-bg-color: rgba(255, 255, 255, 0.08);
-  --l-menu-hover-text-color: rgba(255, 255, 255, 1);
+  --l-menu-hover-text-color: #ffffff;
   --l-menu-active-bg-color: rgba(255, 255, 255, 0.12);
   --l-menu-selected-bg-color: rgba(255, 255, 255, 0.15);
   --l-menu-selected-text-color: #ffffff;
   --l-menu-selected-indicator-color: #ffffff;
   --l-menu-group-title-color: rgba(255, 255, 255, 0.45);
   --l-menu-popup-bg: #1f1f1f;
-  --l-menu-popup-border-color: rgba(255, 255, 255, 0.12);
   --l-menu-popup-shadow:
     0 6px 16px 0 rgba(0, 0, 0, 0.32),
     0 3px 6px -4px rgba(0, 0, 0, 0.48),
     0 9px 28px 8px rgba(0, 0, 0, 0.2);
   --l-menu-primary-color: #ffffff;
-  --l-menu-primary-bg: transparent;
   --l-menu-divider-color: rgba(255, 255, 255, 0.08);
+}
+
+/* ========== 继承颜色模式 ========== */
+/* 当设置 inheritColor=true 时，菜单完全继承父容器的颜色 */
+.l-menu--inherit-color {
+  --l-menu-text-color: inherit;
+  --l-menu-text-color-secondary: inherit;
+  --l-menu-text-color-tertiary: inherit;
+  --l-menu-hover-text-color: inherit;
+  --l-menu-group-title-color: inherit;
+}
+
+/* 继承颜色模式下的选中状态 - 保持主题色突出 */
+.l-menu--inherit-color.l-menu--light {
+  --l-menu-selected-text-color: var(--l-menu-primary-color);
+}
+
+.l-menu--inherit-color.l-menu--dark {
+  --l-menu-selected-text-color: #ffffff;
 }
 
 /* ========== 尺寸变体 ========== */

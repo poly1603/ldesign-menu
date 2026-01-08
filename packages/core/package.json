@@ -46,7 +46,6 @@
       "require": "./lib/styles/*.cjs",
       "default": "./es/styles/*.js"
     },
-    "./src/styles/*": "./src/styles/*.css",
     "./types": {
       "types": "./es/types/index.d.ts",
       "import": "./es/types/index.js",

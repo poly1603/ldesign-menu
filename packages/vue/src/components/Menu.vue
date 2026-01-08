@@ -25,6 +25,15 @@ import {
   handleOverflowPopupHover,
 } from '@ldesign/menu-core'
 import { provideMenuContext, provideSubMenuContext, useMenuState } from '../composables'
+import MenuTree from './MenuTree.vue'
+
+/**
+ * 渲染模式
+ * - `full`: 完整渲染所有菜单项
+ * - `rootOnly`: 只渲染一级菜单项（用于 Mix 布局顶部导航）
+ * - `childrenOf`: 只渲染指定 parentKey 的子菜单（用于 Mix 布局侧边栏）
+ */
+export type MenuRenderMode = 'full' | 'rootOnly' | 'childrenOf'
 
 /**
  * 组件属性
@@ -41,6 +50,28 @@ export interface MenuProps {
    * @default 'vertical'
    */
   mode?: MenuMode
+
+  /**
+   * 渲染模式
+   * - `full`: 完整渲染所有菜单项
+   * - `rootOnly`: 只渲染一级菜单项（不展开子菜单，点击触发 root-select 事件）
+   * - `childrenOf`: 只渲染指定 parentKey 的子菜单
+   * @default 'full'
+   */
+  renderMode?: MenuRenderMode
+
+  /**
+   * 父级菜单 key，配合 renderMode='childrenOf' 使用
+   * 指定后只渲染该父级下的子菜单
+   */
+  parentKey?: string
+
+  /**
+   * 是否继承父容器的文字颜色
+   * 开启后菜单会自动适配深色/浅色背景
+   * @default true
+   */
+  inheritColor?: boolean
 
   /**
    * 子菜单展开方式
@@ -76,7 +107,7 @@ export interface MenuProps {
    * 展开宽度
    * @default 256
    */
-  expandedWidth?: number
+  expandedWidth?: number | string
 
   /**
    * 子级缩进
@@ -162,6 +193,8 @@ const props = withDefaults(defineProps<MenuProps>(), {
   subMenuPlacement: 'right',
   indicatorPosition: 'left',
   bordered: false,
+  renderMode: 'full',
+  inheritColor: true,
 })
 
 const emit = defineEmits<{
@@ -181,6 +214,10 @@ const emit = defineEmits<{
    * 更新展开的 keys
    */
   'update:openKeys': [keys: string[]]
+  /**
+   * rootOnly 模式下点击一级菜单触发
+   */
+  'root-select': [key: string, item: MenuItem]
 }>()
 
 // 使用菜单状态管理
@@ -229,6 +266,43 @@ on('select', (params) => {
 on('openChange', (params) => {
   emit('openChange', params.openKeys)
   emit('update:openKeys', params.openKeys)
+})
+
+// 根据 renderMode 计算实际要渲染的菜单项
+const renderedItems = computed(() => {
+  const items = filteredItems.value
+  console.log('[LMenu] renderedItems computed - filteredItems count:', items.length, 'renderMode:', props.renderMode)
+  
+  if (props.renderMode === 'rootOnly') {
+    // 只渲染一级菜单项，移除 children
+    return items.map(item => {
+      if ('children' in item && item.children) {
+        // 返回新对象，不包含 children
+        const { children, ...rest } = item as any
+        return { ...rest, type: 'item' } as MenuItem
+      }
+      return item
+    })
+  }
+  
+  if (props.renderMode === 'childrenOf' && props.parentKey) {
+    // 查找指定 parentKey 的菜单项，返回其 children
+    const findChildren = (items: MenuItem[], targetKey: string): MenuItem[] => {
+      for (const item of items) {
+        if ('key' in item && item.key === targetKey) {
+          return ('children' in item && item.children) ? item.children : []
+        }
+        if ('children' in item && item.children) {
+          const found = findChildren(item.children, targetKey)
+          if (found.length > 0) return found
+        }
+      }
+      return []
+    }
+    return findChildren(items, props.parentKey)
+  }
+  
+  return items
 })
 
 // SubMenu 注册表（用于插槽模式下的手风琴支持）
@@ -309,7 +383,10 @@ const menuWidth = computed(() => {
   if (props.mode === 'horizontal') {
     return 'auto'
   }
-  return collapsed.value ? `${props.collapsedWidth}px` : `${props.expandedWidth}px`
+  if (collapsed.value) {
+    return typeof props.collapsedWidth === 'number' ? `${props.collapsedWidth}px` : props.collapsedWidth
+  }
+  return typeof props.expandedWidth === 'number' ? `${props.expandedWidth}px` : props.expandedWidth
 })
 
 // 菜单引用
@@ -465,6 +542,8 @@ const classes = computed(() => ({
   'l-menu--collapsed': collapsed.value,
   'l-menu--bordered': props.bordered,
   [`l-menu--indicator-${props.indicatorPosition}`]: true,
+  'l-menu--inherit-color': props.inheritColor,
+  [`l-menu--render-${props.renderMode}`]: true,
 }))
 
 // 暴露方法
@@ -499,7 +578,9 @@ defineExpose({
 <template>
   <nav ref="menuRef" :class="classes" :style="{ width: menuWidth }" role="navigation">
     <ul ref="listRef" class="l-menu__list" role="menu" :class="{ 'l-menu__list--overflow': showMoreButton }">
-      <slot />
+      <slot>
+        <MenuTree v-if="renderedItems.length > 0" :items="renderedItems" :render-mode="renderMode" />
+      </slot>
 
       <!-- 更多按钮 -->
       <li v-if="showMoreButton" ref="moreButtonRef" class="l-menu__more l-submenu l-submenu--level-0"
