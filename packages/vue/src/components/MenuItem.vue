@@ -5,7 +5,7 @@
  */
 import type { Component } from 'vue'
 import type { MenuBadge } from '../types'
-import { computed } from 'vue'
+import { computed, useSlots } from 'vue'
 import { useMenuContext, useSubMenuContext } from '../composables'
 import MenuTooltip from './MenuTooltip.vue'
 
@@ -43,11 +43,21 @@ const emit = defineEmits<{
 
 const menuContext = useMenuContext()
 const subMenuContext = useSubMenuContext()
+const slots = useSlots()
 
 const isSelected = computed(() => menuContext.isSelected(props.itemKey))
 const isActive = computed(() => menuContext.isActive(props.itemKey))
 const level = computed(() => subMenuContext.level)
 const isCollapsed = computed(() => menuContext.collapsed.value)
+
+const iconFallback = computed(() => {
+  const text = (props.label || '').trim()
+  return text ? text.slice(0, 1) : ''
+})
+
+const showIcon = computed(() => {
+  return Boolean(props.icon || iconFallback.value || slots.icon)
+})
 
 const paddingLeft = computed(() => {
   if (isCollapsed.value) return undefined
@@ -105,6 +115,15 @@ function handleClick(event: MouseEvent): void {
   menuContext.closeAllPopups?.()
 }
 
+function handleKeyDown(event: KeyboardEvent): void {
+  if (props.disabled) return
+
+  if (event.key === 'Enter' || event.key === ' ') {
+    event.preventDefault()
+    handleClick(event as unknown as MouseEvent)
+  }
+}
+
 function handleMouseEnter(): void {
   if (!props.disabled) {
     menuContext.setHoverKey(props.itemKey)
@@ -119,19 +138,20 @@ function handleMouseLeave(): void {
 <template>
   <!-- 折叠模式且是顶级菜单项时使用 Tooltip -->
   <MenuTooltip v-if="isCollapsed && level === 0 && label" :content="label" placement="right">
-    <li :class="classes" role="menuitem" :aria-disabled="disabled" :tabindex="disabled ? -1 : 0" @click="handleClick"
-      @mouseenter="handleMouseEnter" @mouseleave="handleMouseLeave">
+    <li :class="classes" role="menuitem" :data-key="itemKey" :aria-disabled="disabled" :tabindex="disabled ? -1 : 0"
+      @click="handleClick" @keydown="handleKeyDown" @mouseenter="handleMouseEnter" @mouseleave="handleMouseLeave">
       <component :is="href ? 'a' : 'div'" class="l-menu-item__content" :href="href" :target="href ? target : undefined">
-        <span v-if="icon || $slots.icon" class="l-menu-item__icon">
+        <span v-if="showIcon" class="l-menu-item__icon">
           <slot name="icon">
             <component v-if="icon && typeof icon !== 'string'" :is="icon" :size="18" />
             <span v-else-if="icon" class="l-menu-item__icon-text">{{ icon }}</span>
+            <span v-else class="l-menu-item__icon-text">{{ iconFallback }}</span>
           </slot>
         </span>
         <span class="l-menu-item__label">
           <slot>{{ label }}</slot>
         </span>
-      <span v-if="$slots.suffix" class="l-menu-item__suffix">
+        <span v-if="$slots.suffix" class="l-menu-item__suffix">
           <slot name="suffix" />
         </span>
         <!-- 徽标 -->
@@ -142,13 +162,15 @@ function handleMouseLeave(): void {
 
   <!-- 非折叠模式 -->
   <li v-else :class="classes" role="menuitem" :data-key="itemKey" :aria-disabled="disabled"
-    :tabindex="disabled ? -1 : 0" @click="handleClick" @mouseenter="handleMouseEnter" @mouseleave="handleMouseLeave">
+    :tabindex="disabled ? -1 : 0" @click="handleClick" @keydown="handleKeyDown" @mouseenter="handleMouseEnter"
+    @mouseleave="handleMouseLeave">
     <component :is="href ? 'a' : 'div'" class="l-menu-item__content" :href="href" :target="href ? target : undefined"
       :style="{ paddingLeft }">
-      <span v-if="icon || $slots.icon" class="l-menu-item__icon">
+      <span v-if="showIcon" class="l-menu-item__icon">
         <slot name="icon">
           <component v-if="icon && typeof icon !== 'string'" :is="icon" :size="18" />
           <span v-else-if="icon" class="l-menu-item__icon-text">{{ icon }}</span>
+          <span v-else class="l-menu-item__icon-text">{{ iconFallback }}</span>
         </slot>
       </span>
       <span class="l-menu-item__label">

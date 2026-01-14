@@ -3,7 +3,7 @@
  * 菜单 Tooltip 组件
  * 用于折叠模式下显示菜单标题和子菜单
  */
-import { computed, onUnmounted, ref, watch } from 'vue'
+import { computed, onMounted, onUnmounted, ref } from 'vue'
 
 export interface MenuTooltipProps {
   content?: string
@@ -19,7 +19,6 @@ const props = withDefaults(defineProps<MenuTooltipProps>(), {
   placement: 'right',
   delay: 150,
   disabled: false,
-  visible: false,
   hasChildren: false,
   trigger: 'both', // 默认同时支持 hover 和 click
 })
@@ -97,6 +96,15 @@ function handleClick(event: MouseEvent): void {
   }
 }
 
+function handleDocumentPointerDown(event: Event): void {
+  if (!internalVisible.value) return
+  const target = event.target as Node | null
+  if (!target) return
+  if (triggerRef.value?.contains(target)) return
+  if (tooltipRef.value?.contains(target)) return
+  internalVisible.value = false
+}
+
 function handleMouseEnter(): void {
   if (props.trigger === 'hover' || props.trigger === 'both') {
     show()
@@ -109,7 +117,12 @@ function handleMouseLeave(): void {
   }
 }
 
+onMounted(() => {
+  document.addEventListener('pointerdown', handleDocumentPointerDown, true)
+})
+
 onUnmounted(() => {
+  document.removeEventListener('pointerdown', handleDocumentPointerDown, true)
   if (showTimer) clearTimeout(showTimer)
   if (hideTimer) clearTimeout(hideTimer)
 })

@@ -4,7 +4,7 @@
  * 支持内联展开和弹出两种模式
  */
 import type { Component } from 'vue'
-import { computed, markRaw, onMounted, onUnmounted, ref, watch, nextTick } from 'vue'
+import { computed, markRaw, onMounted, onUnmounted, ref, watch, nextTick, useSlots } from 'vue'
 import { ChevronDown, ChevronRight } from 'lucide-vue-next'
 import { provideSubMenuContext, useMenuContext, useSubMenuContext } from '../composables'
 import MenuTooltip from './MenuTooltip.vue'
@@ -26,6 +26,7 @@ const props = withDefaults(defineProps<SubMenuProps>(), {
 
 const menuContext = useMenuContext()
 const parentContext = useSubMenuContext()
+const slots = useSlots()
 
 const level = computed(() => parentContext.level)
 
@@ -54,6 +55,15 @@ const isHorizontal = computed(() => menuContext.mode.value === 'horizontal')
 const trigger = computed(() => menuContext.trigger?.value || 'click')
 const expandMode = computed(() => menuContext.expandMode?.value || 'inline')
 const accordion = computed(() => menuContext.accordion?.value ?? false)
+
+const iconFallback = computed(() => {
+  const text = (props.label || '').trim()
+  return text ? text.slice(0, 1) : ''
+})
+
+const showIcon = computed(() => {
+  return Boolean(props.icon || iconFallback.value || !!slots.icon)
+})
 
 const isPopupMode = computed(() => {
   if (isHorizontal.value) return true
@@ -186,6 +196,15 @@ function handleTitleClick(event: MouseEvent): void {
   menuContext.toggleOpen(props.itemKey)
 }
 
+function handleKeyDown(event: KeyboardEvent): void {
+  if (props.disabled) return
+
+  if (event.key === 'Enter' || event.key === ' ') {
+    event.preventDefault()
+    menuContext.toggleOpen(props.itemKey)
+  }
+}
+
 function handleMouseEnter(): void {
   if (props.disabled) return
 
@@ -282,14 +301,16 @@ onUnmounted(() => {
 
 <template>
   <!-- 折叠模式使用 Tooltip - 只显示图标，点击或hover时从右侧弹出子菜单 -->
-  <MenuTooltip v-if="isCollapsed && level === 0" :content="label" :has-children="true" placement="right" trigger="both">
-    <li :class="classes" role="menuitem" :aria-expanded="isOpen" :aria-disabled="disabled"
-      :tabindex="disabled ? -1 : 0">
+  <MenuTooltip v-if="isCollapsed && level === 0 && label" :content="label" :has-children="true" placement="right"
+    trigger="both">
+    <li :class="classes" role="menuitem" :data-key="itemKey" :aria-expanded="isOpen" :aria-disabled="disabled"
+      :tabindex="disabled ? -1 : 0" @keydown="handleKeyDown">
       <div class="l-submenu__title">
-        <span v-if="icon || $slots.icon" class="l-submenu__icon">
+        <span v-if="showIcon" class="l-submenu__icon">
           <slot name="icon">
             <component v-if="icon && typeof icon !== 'string'" :is="icon" :size="18" />
             <span v-else-if="icon" class="l-submenu__icon-text">{{ icon }}</span>
+            <span v-else class="l-submenu__icon-text">{{ iconFallback }}</span>
           </slot>
         </span>
         <!-- 折叠模式下不显示 label 和 arrow -->
@@ -302,13 +323,15 @@ onUnmounted(() => {
   </MenuTooltip>
 
   <!-- 普通模式 -->
-  <li v-else :class="classes" role="menuitem" :aria-expanded="isOpen" :aria-disabled="disabled"
-    :tabindex="disabled ? -1 : 0" @mouseenter="handleMouseEnter" @mouseleave="handleMouseLeave">
+  <li v-else :class="classes" role="menuitem" :aria-expanded="isOpen" :aria-disabled="disabled" :data-key="itemKey"
+    :tabindex="disabled ? -1 : 0" @keydown="handleKeyDown" @mouseenter="handleMouseEnter"
+    @mouseleave="handleMouseLeave">
     <div class="l-submenu__title" :style="{ paddingLeft }" @click="handleTitleClick">
-      <span v-if="icon || $slots.icon" class="l-submenu__icon">
+      <span v-if="showIcon" class="l-submenu__icon">
         <slot name="icon">
           <component v-if="icon && typeof icon !== 'string'" :is="icon" :size="18" />
           <span v-else-if="icon" class="l-submenu__icon-text">{{ icon }}</span>
+          <span v-else class="l-submenu__icon-text">{{ iconFallback }}</span>
         </slot>
       </span>
       <span class="l-submenu__label">

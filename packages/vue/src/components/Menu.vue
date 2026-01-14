@@ -24,7 +24,8 @@ import {
   handleOverflowPopupClick,
   handleOverflowPopupHover,
 } from '@ldesign/menu-core'
-import { provideMenuContext, provideSubMenuContext, useMenuState } from '../composables'
+import { findItemByKey, getItemKey } from '../types'
+import { provideMenuContext, provideSubMenuContext, useMenuKeyboard, useMenuState } from '../composables'
 import MenuTree from './MenuTree.vue'
 
 /**
@@ -220,6 +221,21 @@ const emit = defineEmits<{
   'root-select': [key: string, item: MenuItem]
 }>()
 
+const itemsForState = computed<MenuItem[]>(() => {
+  if (props.renderMode !== 'rootOnly') {
+    return props.items
+  }
+
+  return (props.items || []).map((item, index) => {
+    const key = getItemKey(item, index)
+    if ('children' in item && item.children) {
+      const { children, ...rest } = item as any
+      return { ...rest, key, type: 'item' } as MenuItem
+    }
+    return { ...(item as any), key } as MenuItem
+  })
+})
+
 // 使用菜单状态管理
 const {
   items: filteredItems,
@@ -234,7 +250,7 @@ const {
   setHoverKey,
   on,
 } = useMenuState({
-  items: toRef(props, 'items'),
+  items: itemsForState,
   config: {
     mode: props.mode,
     expandMode: props.expandMode,
@@ -261,6 +277,11 @@ const {
 on('select', (params) => {
   emit('select', params)
   emit('update:selectedKey', params.key)
+
+  if (props.renderMode === 'rootOnly') {
+    const original = findItemByKey(props.items || [], params.key) || params.item
+    emit('root-select', params.key, original)
+  }
 })
 
 on('openChange', (params) => {
@@ -271,8 +292,7 @@ on('openChange', (params) => {
 // 根据 renderMode 计算实际要渲染的菜单项
 const renderedItems = computed(() => {
   const items = filteredItems.value
-  console.log('[LMenu] renderedItems computed - filteredItems count:', items.length, 'renderMode:', props.renderMode)
-  
+
   if (props.renderMode === 'rootOnly') {
     // 只渲染一级菜单项，移除 children
     return items.map(item => {
@@ -284,7 +304,7 @@ const renderedItems = computed(() => {
       return item
     })
   }
-  
+
   if (props.renderMode === 'childrenOf' && props.parentKey) {
     // 查找指定 parentKey 的菜单项，返回其 children
     const findChildren = (items: MenuItem[], targetKey: string): MenuItem[] => {
@@ -301,7 +321,7 @@ const renderedItems = computed(() => {
     }
     return findChildren(items, props.parentKey)
   }
-  
+
   return items
 })
 
@@ -393,6 +413,45 @@ const menuWidth = computed(() => {
 const menuRef = ref<HTMLElement | null>(null)
 const listRef = ref<HTMLElement | null>(null)
 
+function escapeAttrValue(value: string): string {
+  return value.replace(/\\/g, '\\\\').replace(/"/g, '\\"')
+}
+
+const keyboardItems = computed(() => renderedItems.value)
+
+const { focusedKey, setFocus } = useMenuKeyboard({
+  items: keyboardItems,
+  selectedKey,
+  openKeys,
+  onSelect: (key) => {
+    select(key)
+  },
+  onToggleOpen: (key) => {
+    toggleOpen(key)
+  },
+  containerRef: menuRef,
+})
+
+watch(
+  focusedKey,
+  (key) => {
+    if (!key) return
+
+    nextTick(() => {
+      const root = menuRef.value
+      if (!root) return
+
+      const selector = `[data-key="${escapeAttrValue(key)}"]`
+      const el = root.querySelector(selector) as HTMLElement | null
+      if (!el) return
+
+      el.focus()
+      el.scrollIntoView({ block: 'nearest' })
+    })
+  },
+  { flush: 'post' },
+)
+
 // 溢出折叠相关（使用 core 的 OverflowManager）
 const isMoreOpen = ref(false)
 const moreButtonRef = ref<HTMLElement | null>(null)
@@ -427,6 +486,7 @@ watch(isMoreOpen, (open) => {
 function onMorePopupClick(event: MouseEvent): void {
   handleOverflowPopupClick(event, {
     onMenuItemClick: (itemKey) => {
+      setFocus(itemKey)
       select(itemKey)
       isMoreOpen.value = false
     },
